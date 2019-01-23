@@ -20,3 +20,6 @@ MASSCAN_FULL_SCAN = False  # 是否扫描全端口
 
 # WEB Restful接口地址
 WEB_INTERFACE = ""
+
+# WEB POCS repository 提供指纹识别对应的poc仓库
+WEB_REPOSITORY = "https://github.com/boy-hack/airbug"

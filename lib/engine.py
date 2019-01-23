@@ -5,14 +5,18 @@
 # @File    : engine.py
 # 分发调度引擎
 import _thread
+from concurrent.futures import ThreadPoolExecutor
 import os
 import threading
 import time
 from queue import Queue
 
+import HackRequests
+
+from config import NUM_CACHE_DOMAIN, NUM_CACHE_IP, MASSCAN_DEFAULT_PORT, MASSCAN_FULL_SCAN
 from lib.common import is_ip_address_format, is_url_format
 from lib.data import logger, PATHS, collector
-from config import NUM_CACHE_DOMAIN, NUM_CACHE_IP, MASSCAN_DEFAULT_PORT, MASSCAN_FULL_SCAN
+from plugins import webeye, webtitle, bakfile, crossdomain, gitleak, iis_parse, phpinfo, svnleak, tomcat_leak
 from plugins.masscan import masscan
 from plugins.nmap import nmapscan
 
@@ -52,15 +56,6 @@ class Schedular:
         while 1:
             struct = self.queue.get()
             serviceType = struct.get("serviceType", 'other')
-            func = struct.get("func", None)
-            if func:
-                del struct["func"]
-                try:
-                    func(struct)
-                    self.queue.task_done()
-                except Exception as e:
-                    logger.error(e)
-                continue
 
             if serviceType == "other":
                 msg = "not matches target:{}".format(repr(struct))
@@ -91,7 +86,9 @@ class Schedular:
                 self.lock.release()
                 if not flag:
                     continue
-                self.hand_domain(serviceTypes)
+                # 多线程启动扫描域名
+                for serviceType in serviceTypes:
+                    self.hand_domain(serviceType)
             self.queue.task_done()
 
     def start(self):
@@ -166,7 +163,39 @@ class Schedular:
         logger.info(repr(result2))
         collector.add_ips(result2)
 
-    def hand_domain(self, serviceTypes):
-        for serviceType in serviceTypes:
-            target = serviceType["target"]
-            logger.info(target)
+    def hand_domain(self, serviceType):
+        target = serviceType["target"]
+        logger.info(target)
+        # 添加这条记录
+        collector.add_domain(target)
+        # 发起请求
+        hack = HackRequests.hackRequests()
+        try:
+            hh = hack.http(target)
+            html = hh.text()
+            status_code = hh.status_code
+            collector.add_domain_info(target, {"headers": hh.headers, "body": html, "status_code": status_code})
+        except Exception as e:
+            logger.error("request url error:" + str(e))
+            collector.del_domain(target)
+            return
+
+        WorkList = []
+        WorkList.append(webeye.poc)
+        WorkList.append(webtitle.poc)
+        WorkList.append(bakfile.poc)
+        WorkList.append(crossdomain.poc)
+        WorkList.append(gitleak.poc)
+        WorkList.append(iis_parse.poc)
+        WorkList.append(phpinfo.poc)
+        WorkList.append(svnleak.poc)
+        WorkList.append(tomcat_leak.poc)
+
+        with ThreadPoolExecutor(max_workers=len(WorkList)) as executor:
+            for func in WorkList:
+                executor.submit(func, target)
+
+        print(collector.get_domain(target))
+
+    def run(self):
+        self.queue.join()

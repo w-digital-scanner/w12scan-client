@@ -20,6 +20,7 @@ def main():
     PATHS.ROOT_PATH = module_path()
     PATHS.PLUGIN_PATH = os.path.join(PATHS.ROOT_PATH, "pocs")
     PATHS.OUTPUT_PATH = os.path.join(PATHS.ROOT_PATH, "output")
+    PATHS.DATA_PATH = os.path.join(PATHS.ROOT_PATH, "data")
 
     logger.info("Hello W12SCAN !")
     targets = ["https://x.hacking8.com"] * 10
@@ -32,8 +33,9 @@ def main():
         schedular.put_target(t)
     schedular.start()
     # 启动任务分发调度器
-    while 1:
-        pass
+    # while 1:
+    #     pass
+    schedular.run()
 
 
 if __name__ == '__main__':
