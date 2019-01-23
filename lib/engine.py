@@ -11,7 +11,7 @@ import time
 from queue import Queue
 
 from lib.common import is_ip_address_format, is_url_format
-from lib.data import logger, PATHS,collector
+from lib.data import logger, PATHS, collector
 from config import NUM_CACHE_DOMAIN, NUM_CACHE_IP, MASSCAN_DEFAULT_PORT, MASSCAN_FULL_SCAN
 from plugins.masscan import masscan
 from plugins.nmap import nmapscan
@@ -28,7 +28,7 @@ class Schedular:
         self.cache_domains = []  # 域名缓冲池
         logger.info("Start number of threading {}".format(self.threadNum))
 
-    def put(self, target):
+    def put_target(self, target):
         # 判断是IP还是域名，加入不同的字段
         serviceType = "domain"
         if is_ip_address_format(target):
@@ -45,10 +45,23 @@ class Schedular:
 
         self.queue.put(tmp)
 
+    def put_struct(self, struct):
+        self.queue.put(struct)
+
     def receive(self):
         while 1:
             struct = self.queue.get()
             serviceType = struct.get("serviceType", 'other')
+            func = struct.get("func", None)
+            if func:
+                del struct["func"]
+                try:
+                    func(struct)
+                    self.queue.task_done()
+                except Exception as e:
+                    logger.error(e)
+                continue
+
             if serviceType == "other":
                 msg = "not matches target:{}".format(repr(struct))
                 logger.error(msg)
@@ -79,6 +92,7 @@ class Schedular:
                 if not flag:
                     continue
                 self.hand_domain(serviceTypes)
+            self.queue.task_done()
 
     def start(self):
         for i in range(self.threadNum):
@@ -142,17 +156,17 @@ class Schedular:
                 extrainfo = portInfo.get("extrainfo", "")
                 if name == "http":
                     _url = "http://" + host + ":" + port
-                    self.put(_url)
+                    self.put_target(_url)
                 elif name == "https":
                     _url = "https://" + host
-                    self.put(_url)
+                    self.put_target(_url)
                 result2[host].append(
                     {"port": port, "name": name, "product": product, "version": version, "extrainfo": extrainfo})
 
         logger.info(repr(result2))
         collector.add_ips(result2)
 
-
     def hand_domain(self, serviceTypes):
         for serviceType in serviceTypes:
             target = serviceType["target"]
+            logger.info(target)

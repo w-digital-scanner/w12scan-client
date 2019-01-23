@@ -6,6 +6,7 @@
 import os
 from lib.data import PATHS, logger
 from lib.engine import Schedular
+from config import THREAD_NUM
 
 
 def module_path():
@@ -26,9 +27,9 @@ def main():
     # domain域名整理（统一格式：无论是域名还是二级目录，右边没有 /），ip cidr模式识别，ip整理
 
     # 访问redis去重验证
-    schedular = Schedular(threadnum=1)
+    schedular = Schedular(threadnum=THREAD_NUM)
     for t in targets:
-        schedular.put(t)
+        schedular.put_target(t)
     schedular.start()
     # 启动任务分发调度器
     while 1:
