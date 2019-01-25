@@ -23,7 +23,7 @@ def main():
     PATHS.DATA_PATH = os.path.join(PATHS.ROOT_PATH, "data")
 
     logger.info("Hello W12SCAN !")
-    targets = ["https://x.hacking8.com"] * 10
+    targets = ["https://x.hacking8.com"]
     # init path
     # domain域名整理（统一格式：无论是域名还是二级目录，右边没有 /），ip cidr模式识别，ip整理
 

@@ -16,7 +16,7 @@ import HackRequests
 from config import NUM_CACHE_DOMAIN, NUM_CACHE_IP, MASSCAN_DEFAULT_PORT, MASSCAN_FULL_SCAN
 from lib.common import is_ip_address_format, is_url_format
 from lib.data import logger, PATHS, collector
-from plugins import webeye, webtitle, bakfile, crossdomain, gitleak, iis_parse, phpinfo, svnleak, tomcat_leak
+from plugins import webeye, webtitle, bakfile, crossdomain, gitleak, iis_parse, phpinfo, svnleak, tomcat_leak, whatcms
 from plugins.masscan import masscan
 from plugins.nmap import nmapscan
 
@@ -183,18 +183,26 @@ class Schedular:
         WorkList = []
         WorkList.append(webeye.poc)
         WorkList.append(webtitle.poc)
-        WorkList.append(bakfile.poc)
+        # WorkList.append(bakfile.poc)
         WorkList.append(crossdomain.poc)
         WorkList.append(gitleak.poc)
         WorkList.append(iis_parse.poc)
         WorkList.append(phpinfo.poc)
         WorkList.append(svnleak.poc)
         WorkList.append(tomcat_leak.poc)
+        WorkList.append(whatcms.poc)
 
-        with ThreadPoolExecutor(max_workers=len(WorkList)) as executor:
-            for func in WorkList:
-                executor.submit(func, target)
-
+        # with ThreadPoolExecutor(max_workers=len(WorkList)) as executor:
+        #     for func in WorkList:
+        #         executor.submit(func, target)
+        th = []
+        for func in WorkList:
+            i = threading.Thread(target=func, args=(target,))
+            th.append(i)
+        for thi in th:
+            thi.start()
+        for thi in th:
+            thi.join()
         print(collector.get_domain(target))
 
     def run(self):

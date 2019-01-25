@@ -152,13 +152,16 @@ CMS:jenkins|url|/login?from=%2F|Jenkins
 CMS:axis|index|index|<title>Axis 2 - Home</title>
 CMS:axis|url|/axis2-web/css/axis-style.css|Licensed to the Apache Software Foundation
 CMS:solr|url|/solr|Solr Admin
-
-[Server]
-Server:hadoop|index|index|<title>Hadoop Administration</title>
-Server:elasticsearch|index|index|\"cluster_name\" : \"elasticsearch\"
-Server:tomcat|index|index|<title>Apache Tomcat/.*?</title>
-Server:hfs|headers|Set-Cookie|HFS_SID
-Server:http_basic|headers|WWW-Authenticate|Basic
+CMS:hadoop|index|index|<title>Hadoop Administration</title>
+CMS:elasticsearch|index|index|\"cluster_name\" : \"elasticsearch\"
+CMS:tomcat|index|index|<title>Apache Tomcat/.*?</title>
+CMS:hfs|headers|Set-Cookie|HFS_SID
+CMS:http_basic|headers|WWW-Authenticate|Basic
+CMS:jboss|headers|X-Powered-By|jboss
+CMS:weblogic|url|/console/css/login.css|Login_GC_LoginPage_Bg.gif
+CMS:glassfish|url|/resource/js/cj.js|glassfish.dev.java.net
+CMS:glassfish|headers|server|GlassFish
+CMS:jenkins|headers|X-Jenkins|.*?
 
 [Router]
 Router:2wire|headers|Server|2wire
