@@ -6,6 +6,7 @@
 # 收集器，用于收集信息传递参数
 import threading
 import copy
+import queue
 
 
 class Collector:
@@ -13,6 +14,7 @@ class Collector:
     def __init__(self):
         self.collect_lock = threading.Lock()
         self.collect_domains = {}
+        self.cache_queue = queue.Queue()
 
     def add_ip(self, info):
         pass
@@ -62,9 +64,23 @@ class Collector:
         del self.collect_domains[domain]
         self.collect_lock.release()
 
+    def send_ok(self, domain):
+        '''
+        传递ok信号，将域名缓存到缓冲队列，自动检测缓冲队列，大于10个则自动发送到接口
+        :param domain:
+        :return:
+        '''
+        data = self.get_domain(domain)
+        self.cache_queue.put(data)
+        self.del_domain(domain)
+        if self.cache_queue.qsize() > 10:
+            self.submit()
+
     def submit(self):
         '''
         传递信息给web restful接口
         :return:
         '''
-        pass
+        while not self.cache_queue.empty():
+            data = self.cache_queue.get()
+            print(data)

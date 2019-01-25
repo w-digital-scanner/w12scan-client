@@ -3,6 +3,8 @@
 # @Time    : 2019/1/14 5:46 PM
 # @Author  : w8ay
 # @File    : common.py
+import hashlib
+import os
 import re
 
 
@@ -20,3 +22,14 @@ def is_url_format(value):
         return True
     else:
         return False
+
+
+def get_md5(value):
+    if isinstance(value, str):
+        value = value.encode(encoding='UTF-8')
+    return hashlib.md5(value).hexdigest()
+
+
+def get_filename(filepath, with_ext=True):
+    base_name = os.path.basename(filepath)
+    return base_name if with_ext else os.path.splitext(base_name)[0]

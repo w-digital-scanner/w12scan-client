@@ -12,13 +12,16 @@ import time
 from queue import Queue
 
 import HackRequests
+import requests
 
 from config import NUM_CACHE_DOMAIN, NUM_CACHE_IP, MASSCAN_DEFAULT_PORT, MASSCAN_FULL_SCAN
 from lib.common import is_ip_address_format, is_url_format
 from lib.data import logger, PATHS, collector
+from lib.loader import load_remote_poc, load_string_to_module
 from plugins import webeye, webtitle, bakfile, crossdomain, gitleak, iis_parse, phpinfo, svnleak, tomcat_leak, whatcms
 from plugins.masscan import masscan
 from plugins.nmap import nmapscan
+from concurrent import futures
 
 
 class Schedular:
@@ -203,7 +206,42 @@ class Schedular:
             thi.start()
         for thi in th:
             thi.join()
-        print(collector.get_domain(target))
+        fields = ["Langeuage", "Server", "CMS"]
+        infos = collector.get_domain(target)
+        _pocs = []
+        for field in fields:
+            if field in infos:
+                keyword = infos[field]
+                # 远程读取插件
+                pocs = load_remote_poc()
+                for poc in pocs:
+                    if poc["name"] == keyword:
+                        webfile = poc["webfile"]
+                        logger.debug("load {0} poc:{1} poc_time:{2}".format(poc["type"], webfile, poc["time"]))
+                        # 加载插件
+                        code = requests.get(webfile).text
+                        obj = load_string_to_module(code, webfile)
+                        _pocs.append(obj)
+
+        # 并发执行插件
+        if _pocs:
+            executor = futures.ThreadPoolExecutor(len(_pocs))
+            fs = []
+            for f in _pocs:
+                taks = executor.submit(f.poc, target)
+                fs.append(taks)
+            for f in futures.as_completed(fs):
+                try:
+                    res = f.result()
+                except Exception as e:
+                    res = None
+                    logger.error(e)
+                if res:
+                    name = res.get("name") or "scan" + str(time.time())
+                    collector.add_domain_bug(target, {name: res})
+
+        collector.send_ok(target)
 
     def run(self):
         self.queue.join()
+        collector.submit()

@@ -1,5 +1,5 @@
 # w12scan_client
-网络资产搜索发现引擎，毕业设计，w12scan 客户端程序
+网络资产搜索发现引擎,大规模资产识别，毕业设计，w12scan 客户端程序
 
 ## 扫描器架构
 
@@ -18,8 +18,8 @@
         - title
     - [x] 敏感文件扫描 
     - [ ] 优化备份文件扫描
-    - WEB指纹分析
-        - 可以远程调用AIRBUG https://github.com/boy-hack/airbug
+    - [x] WEB指纹分析
+        - [x] 可以远程调用AIRBUG https://github.com/boy-hack/airbug
     - [ ] bug漏洞添加log信息详情
     - [ ] 后台目录扫描(自动识别语言后扫描)
 - [ ] 完成IP类插件
