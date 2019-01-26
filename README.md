@@ -1,4 +1,4 @@
-# w12scan_client
+# w12scan-client
 网络资产搜索发现引擎,大规模资产识别，毕业设计，w12scan 客户端程序
 
 ## 扫描器架构

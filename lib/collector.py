@@ -93,12 +93,8 @@ class Collector:
             self.submit()
 
     def send_ok_ip(self, target):
-        infos = self.get_ip(target)
-        data = {
-            'target': target
-        }
-        if infos:
-            data["infos"] = infos
+        data = self.get_ip(target)
+        data['target'] = target
         self.del_ip(target)
         self.cache_ips.put(data)
         if self.cache_ips.qsize() > 10:

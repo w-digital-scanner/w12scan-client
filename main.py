@@ -23,9 +23,8 @@ def main():
     PATHS.DATA_PATH = os.path.join(PATHS.ROOT_PATH, "data")
 
     logger.info("Hello W12SCAN !")
-    targets = ["https://x.hacking8.com", "https://www.wwc-blog.com", "https://pjax.cn",
-               "https://www.mosq.cn", "https://www.52ecy.cn", "http://188.131.196.108", "188.131.196.108",
-               "188.131.196.109", "188.131.196.110"]
+    targets = ["https://x.hacking8.com", "http://www.70xk.com/", "119.98.222.103", "http://188.131.196.108",
+               "188.131.196.108"]
     # init path
     # domain域名整理（统一格式：无论是域名还是二级目录，右边没有 /），ip cidr模式识别，ip整理
 

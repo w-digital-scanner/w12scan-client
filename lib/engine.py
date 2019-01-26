@@ -19,7 +19,8 @@ from config import NUM_CACHE_DOMAIN, NUM_CACHE_IP, MASSCAN_DEFAULT_PORT, MASSCAN
 from lib.common import is_ip_address_format, is_url_format
 from lib.data import logger, PATHS, collector
 from lib.loader import load_remote_poc, load_string_to_module
-from plugins import webeye, webtitle, bakfile, crossdomain, gitleak, iis_parse, phpinfo, svnleak, tomcat_leak, whatcms
+from plugins import webeye, webtitle, bakfile, crossdomain, gitleak, iis_parse, phpinfo, svnleak, tomcat_leak, whatcms, \
+    ip_location
 from plugins.masscan import masscan
 from plugins.nmap import nmapscan
 from concurrent import futures
@@ -168,7 +169,17 @@ class Schedular:
                 result2[host].append(
                     {"port": port, "name": name, "product": product, "version": version, "extrainfo": extrainfo})
 
-        collector.add_ips(result2)
+        data = {}
+        for ip in result2.keys():
+            # result2[ip]
+            if ip not in data:
+                data[ip] = {}
+            d = ip_location.poc(ip)
+            if d:
+                data[ip]["location"] = d
+            data[ip]["infos"] = result2[ip]
+
+        collector.add_ips(data)
         for ip in result2.keys():
             collector.send_ok_ip(ip)
 
@@ -249,7 +260,7 @@ class Schedular:
                     res = f.result()
                 except Exception as e:
                     res = None
-                    logger.error(e)
+                    logger.error("domain:{} error:{}".format(target, str(e)))
                 if res:
                     name = res.get("name") or "scan" + str(time.time())
                     collector.add_domain_bug(target, {name: res})
