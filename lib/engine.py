@@ -10,6 +10,7 @@ import os
 import threading
 import time
 from queue import Queue
+import socket
 
 import HackRequests
 import requests
@@ -63,6 +64,7 @@ class Schedular:
             if serviceType == "other":
                 msg = "not matches target:{}".format(repr(struct))
                 logger.error(msg)
+                self.queue.task_done()
                 continue
             if serviceType == "ip":
                 flag = False
@@ -75,6 +77,7 @@ class Schedular:
                     self.cache_ips = []
                 self.lock.release()
                 if not flag:
+                    self.queue.task_done()
                     continue
                 self.hand_ip(serviceTypes)
             elif serviceType == "domain":
@@ -88,6 +91,7 @@ class Schedular:
                     self.cache_domains = []
                 self.lock.release()
                 if not flag:
+                    self.queue.task_done()
                     continue
                 # 多线程启动扫描域名
                 for serviceType in serviceTypes:
@@ -108,6 +112,7 @@ class Schedular:
         target = os.path.join(PATHS.OUTPUT_PATH, "target_" + str(time.time()) + ".log")
         with open(target, "w+") as fp:
             fp.write('\n'.join(IP_LIST))
+        logger.debug("ip:" + repr(IP_LIST))
         result = masscan(target, ports)
         if result is None:
             return None
@@ -154,17 +159,18 @@ class Schedular:
                 product = portInfo.get("product", "")
                 version = portInfo.get("version", "")
                 extrainfo = portInfo.get("extrainfo", "")
-                if name == "http":
-                    _url = "http://" + host + ":" + port
+                if name == "http" and port != 443:
+                    _url = "http://{0}:{1}".format(host, port)
                     self.put_target(_url)
-                elif name == "https":
+                elif name == "http" and port == 443:
                     _url = "https://" + host
                     self.put_target(_url)
                 result2[host].append(
                     {"port": port, "name": name, "product": product, "version": version, "extrainfo": extrainfo})
 
-        logger.info(repr(result2))
         collector.add_ips(result2)
+        for ip in result2.keys():
+            collector.send_ok_ip(ip)
 
     def hand_domain(self, serviceType):
         target = serviceType["target"]
@@ -177,11 +183,19 @@ class Schedular:
             hh = hack.http(target)
             html = hh.text()
             status_code = hh.status_code
-            collector.add_domain_info(target, {"headers": hh.headers, "body": html, "status_code": status_code})
+            collector.add_domain_info(target,
+                                      {"headers": hh.headers, "body": html, "status_code": status_code})
         except Exception as e:
             logger.error("request url error:" + str(e))
             collector.del_domain(target)
             return
+
+        # Get hostname
+        try:
+            _ip = socket.gethostbyname(target)
+            collector.add_domain_info(target, {"ip": _ip})
+        except:
+            pass
 
         WorkList = []
         WorkList.append(webeye.poc)
@@ -244,4 +258,15 @@ class Schedular:
 
     def run(self):
         self.queue.join()
+        # 对剩余未处理的域名进行处理
+        if self.cache_domains:
+            serviceTypes = self.cache_domains
+            # 多线程启动扫描域名
+            for serviceType in serviceTypes:
+                self.hand_domain(serviceType)
+        # 对剩余未处理的ip进行处理
+        if self.cache_ips:
+            serviceTypes = self.cache_ips
+            self.hand_ip(serviceTypes)
+        # 最后一次提交
         collector.submit()

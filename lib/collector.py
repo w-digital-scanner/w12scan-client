@@ -14,10 +14,11 @@ class Collector:
     def __init__(self):
         self.collect_lock = threading.Lock()
         self.collect_domains = {}
+        self.collect_ips = {}
+        # domain cache 缓存队列
         self.cache_queue = queue.Queue()
-
-    def add_ip(self, info):
-        pass
+        # ip cache 缓存队列
+        self.cache_ips = queue.Queue()
 
     def add_domain(self, domain):
         self.collect_lock.acquire()
@@ -41,8 +42,17 @@ class Collector:
             self.collect_domains[domain]["bugs"][k] = v
         self.collect_lock.release()
 
-    def add_ips(self, infos):
-        pass
+    def add_ips(self, infos: dict):
+        for k, v in infos.items():
+            self.collect_lock.acquire()
+            self.collect_ips[k] = v
+            self.collect_lock.release()
+
+    def get_ip(self, target):
+        self.collect_lock.acquire()
+        data = copy.deepcopy(self.collect_ips[target])
+        self.collect_lock.release()
+        return data
 
     def get_domain(self, domain):
         self.collect_lock.acquire()
@@ -64,6 +74,11 @@ class Collector:
         del self.collect_domains[domain]
         self.collect_lock.release()
 
+    def del_ip(self, target):
+        self.collect_lock.acquire()
+        del self.collect_ips[target]
+        self.collect_lock.release()
+
     def send_ok(self, domain):
         '''
         传递ok信号，将域名缓存到缓冲队列，自动检测缓冲队列，大于10个则自动发送到接口
@@ -71,9 +86,22 @@ class Collector:
         :return:
         '''
         data = self.get_domain(domain)
+        data["url"] = domain
         self.cache_queue.put(data)
         self.del_domain(domain)
         if self.cache_queue.qsize() > 10:
+            self.submit()
+
+    def send_ok_ip(self, target):
+        infos = self.get_ip(target)
+        data = {
+            'target': target
+        }
+        if infos:
+            data["infos"] = infos
+        self.del_ip(target)
+        self.cache_ips.put(data)
+        if self.cache_ips.qsize() > 10:
             self.submit()
 
     def submit(self):
@@ -81,6 +109,12 @@ class Collector:
         传递信息给web restful接口
         :return:
         '''
+        # domain
         while not self.cache_queue.empty():
             data = self.cache_queue.get()
+            print(data)
+
+        # ips
+        while not self.cache_ips.empty():
+            data = self.cache_ips.get()
             print(data)

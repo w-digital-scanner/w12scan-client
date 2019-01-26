@@ -23,3 +23,10 @@
     - [ ] bug漏洞添加log信息详情
     - [ ] 后台目录扫描(自动识别语言后扫描)
 - [ ] 完成IP类插件
+
+## For mac
+
+- brew install masscan
+- brew install nmap
+
+sudo运行程序

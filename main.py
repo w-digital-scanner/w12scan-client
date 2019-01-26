@@ -24,7 +24,8 @@ def main():
 
     logger.info("Hello W12SCAN !")
     targets = ["https://x.hacking8.com", "https://www.wwc-blog.com", "https://pjax.cn",
-               "https://www.mosq.cn", "https://www.52ecy.cn"]
+               "https://www.mosq.cn", "https://www.52ecy.cn", "http://188.131.196.108", "188.131.196.108",
+               "188.131.196.109", "188.131.196.110"]
     # init path
     # domain域名整理（统一格式：无论是域名还是二级目录，右边没有 /），ip cidr模式识别，ip整理
 
