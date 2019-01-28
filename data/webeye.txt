@@ -73,7 +73,6 @@ CMS:phpdisk|url|/robots.txt|PHPDisk
 CMS:dedecms|url|/robots.txt|/plus/feedback_js.php
 CMS:dedecms|index|index|Powered by <a target="_blank" href="http://www.dedecms.com/">DedeCMS</a>
 CMS:startbbs|index|index|class=\"startbbs|Powered by <a href=\"http://www.startbbs.com\"
-CMS:thinkphp|url|/index.php/chuhades|ThinkPHP
 CMS:drupal|headers|X-Generator|Drupal
 CMS:drupal|headers|X-Drupal-Cache|.*?
 CMS:drupal|headers|X-Drupal-Dynamic-Cache|.*?

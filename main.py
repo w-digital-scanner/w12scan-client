@@ -5,7 +5,7 @@
 # @File    : main.py
 import os
 from lib.data import PATHS, logger
-from lib.engine import Schedular
+from lib.engine import Schedular,init
 from config import THREAD_NUM
 
 
@@ -23,12 +23,17 @@ def main():
     PATHS.DATA_PATH = os.path.join(PATHS.ROOT_PATH, "data")
 
     logger.info("Hello W12SCAN !")
-    targets = ["https://x.hacking8.com", "http://www.70xk.com/", "119.98.222.103", "http://188.131.196.108",
-               "188.131.196.108"]
+    # targets = ["https://x.hacking8.com", "http://www.70xk.com/", "119.98.222.103", "http://188.131.196.108",
+    #            "188.131.196.108"]
+    with open("1.txt") as f:
+        tt = f.readlines()
+
+    targets = [t.strip() for t in tt]
     # init path
     # domain域名整理（统一格式：无论是域名还是二级目录，右边没有 /），ip cidr模式识别，ip整理
 
     # 访问redis去重验证
+    init()
     schedular = Schedular(threadnum=THREAD_NUM)
     for t in targets:
         schedular.put_target(t)

@@ -5,11 +5,16 @@
 # @File    : ip_location.py
 import requests
 import json
+from lib.data import logger
 
 
 def poc(arg):
     api = "http://ip.taobao.com/service/getIpInfo.php?ip={0}".format(arg)
-    r = requests.get(api)
+    try:
+        r = requests.get(api)
+    except Exception as e:
+        logger.error("ip_location request faild:" + str(e))
+        return False
     if r.status_code != 200:
         return False
     jsonp = r.text

@@ -5,13 +5,13 @@
 # @File    : config.py
 
 # 程序运行的线程数
-THREAD_NUM = 5
+THREAD_NUM = 20
 
 # Ip的缓存数量
-NUM_CACHE_IP = 10
+NUM_CACHE_IP = 150
 
 # 域名的缓存数量
-NUM_CACHE_DOMAIN = 1
+NUM_CACHE_DOMAIN = 10
 
 # Masscan相关
 MASSCAN_RATE = 1000  # masscan 的速率

@@ -5,25 +5,33 @@
 # @File    : engine.py
 # 分发调度引擎
 import _thread
-from concurrent.futures import ThreadPoolExecutor
 import os
+import socket
+import ssl
 import threading
 import time
+from concurrent import futures
 from queue import Queue
-import socket
 
-import HackRequests
 import requests
+from urllib3 import disable_warnings
 
 from config import NUM_CACHE_DOMAIN, NUM_CACHE_IP, MASSCAN_DEFAULT_PORT, MASSCAN_FULL_SCAN
 from lib.common import is_ip_address_format, is_url_format
 from lib.data import logger, PATHS, collector
 from lib.loader import load_remote_poc, load_string_to_module
-from plugins import webeye, webtitle, bakfile, crossdomain, gitleak, iis_parse, phpinfo, svnleak, tomcat_leak, whatcms, \
+from plugins import webeye, webtitle, crossdomain, gitleak, iis_parse, phpinfo, svnleak, tomcat_leak, whatcms, \
     ip_location
 from plugins.masscan import masscan
 from plugins.nmap import nmapscan
-from concurrent import futures
+from urllib.parse import urlparse
+
+
+def init():
+    # hook dispatch
+
+    ssl._create_default_https_context = ssl._create_unverified_context
+    disable_warnings()
 
 
 class Schedular:
@@ -189,24 +197,23 @@ class Schedular:
         # 添加这条记录
         collector.add_domain(target)
         # 发起请求
-        hack = HackRequests.hackRequests()
         try:
-            hh = hack.http(target)
-            html = hh.text()
-            status_code = hh.status_code
+            r = requests.get(target, timeout=10)
             collector.add_domain_info(target,
-                                      {"headers": hh.headers, "body": html, "status_code": status_code})
+                                      {"headers": r.headers, "body": r.text, "status_code": r.status_code})
         except Exception as e:
             logger.error("request url error:" + str(e))
             collector.del_domain(target)
             return
 
         # Get hostname
-        try:
-            _ip = socket.gethostbyname(target)
-            collector.add_domain_info(target, {"ip": _ip})
-        except:
-            pass
+        hostname = urlparse(target).netloc.split(":")[0]
+        if not is_ip_address_format(hostname):
+            try:
+                _ip = socket.gethostbyname(hostname)
+                collector.add_domain_info(target, {"ip": _ip})
+            except:
+                pass
 
         WorkList = []
         WorkList.append(webeye.poc)
@@ -262,7 +269,7 @@ class Schedular:
                     res = None
                     logger.error("domain:{} error:{}".format(target, str(e)))
                 if res:
-                    name = res.get("name") or "scan" + str(time.time())
+                    name = res.get("name") or "scan_" + str(time.time())
                     collector.add_domain_bug(target, {name: res})
 
         collector.send_ok(target)
