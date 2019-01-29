@@ -7,11 +7,11 @@
 import _thread
 import os
 import socket
-import ssl
 import threading
 import time
 from concurrent import futures
 from queue import Queue
+from urllib.parse import urlparse
 
 import requests
 from urllib3 import disable_warnings
@@ -24,15 +24,12 @@ from plugins import webeye, webtitle, crossdomain, gitleak, iis_parse, phpinfo, 
     ip_location, wappalyzer
 from plugins.masscan import masscan
 from plugins.nmap import nmapscan
-from urllib.parse import urlparse
 
 
 def init():
     # hook dispatch
 
-    ssl._create_default_https_context = ssl._create_unverified_context
     disable_warnings()
-    os.environ.setdefault('REQUESTS_CA_BUNDLE', False)
 
 
 class Schedular:
@@ -72,7 +69,6 @@ class Schedular:
         while 1:
             struct = self.queue.get()
             serviceType = struct.get("serviceType", 'other')
-
             if serviceType == "other":
                 msg = "not matches target:{}".format(repr(struct))
                 logger.error(msg)

@@ -7,10 +7,7 @@ import json
 import os
 import re
 import warnings
-
-import requests
 from lib.data import PATHS, collector
-from main import module_path
 
 
 class Wappalyzer(object):
@@ -199,19 +196,6 @@ def poc(target):
     wappalyzer = Wappalyzer.latest()
     b = wappalyzer.analyze(html, headers)
     if b:
-        collector.add_domain_info(target, {"app": b})
+        collector.add_domain_info(target, {"app": list(b)})
 
 
-if __name__ == '__main__':
-    PATHS.ROOT_PATH = module_path()
-    PATHS.PLUGIN_PATH = os.path.join(PATHS.ROOT_PATH, "pocs")
-    PATHS.OUTPUT_PATH = os.path.join(PATHS.ROOT_PATH, "output")
-    PATHS.DATA_PATH = os.path.join(PATHS.ROOT_PATH, "data")
-    wappalyzer = Wappalyzer.latest()
-    url = "https://x.hacking8.com"
-    r = requests.get(url)
-    webpage = r.text
-    headers = r.headers
-
-    b = wappalyzer.analyze(webpage, headers)
-    print(list(b))

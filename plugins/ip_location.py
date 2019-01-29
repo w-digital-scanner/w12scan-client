@@ -3,12 +3,15 @@
 # @Time    : 2019/1/26 11:56 PM
 # @Author  : w8ay
 # @File    : ip_location.py
+import os
+
 import requests
 import json
-from lib.data import logger
+from lib.data import logger, PATHS
+import geoip2.database
 
 
-def poc(arg):
+def taobao_api(arg):
     api = "http://ip.taobao.com/service/getIpInfo.php?ip={0}".format(arg)
     try:
         r = requests.get(api)
@@ -28,3 +31,21 @@ def poc(arg):
         return d
     else:
         return False
+
+
+def geoip(arg):
+    filename = os.path.join(PATHS.DATA_PATH, "GeoLite2", "GeoLite2-City.mmdb")
+    reader = geoip2.database.Reader(filename)
+    response = reader.city(arg)
+    d = {
+        "country_id": response.country.iso_code,
+        "country": response.country.name,
+        "region": response.city.name
+    }
+
+    return d
+
+
+def poc(ip):
+    interface = geoip(ip)
+    return interface

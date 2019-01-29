@@ -5,7 +5,7 @@
 # @File    : main.py
 import os
 from lib.data import PATHS, logger
-from lib.engine import Schedular,init
+from lib.engine import Schedular, init
 from config import THREAD_NUM
 
 
