@@ -21,7 +21,7 @@ from lib.common import is_ip_address_format, is_url_format
 from lib.data import logger, PATHS, collector
 from lib.loader import load_remote_poc, load_string_to_module
 from plugins import webeye, webtitle, crossdomain, gitleak, iis_parse, phpinfo, svnleak, tomcat_leak, whatcms, \
-    ip_location
+    ip_location, wappalyzer
 from plugins.masscan import masscan
 from plugins.nmap import nmapscan
 from urllib.parse import urlparse
@@ -32,6 +32,7 @@ def init():
 
     ssl._create_default_https_context = ssl._create_unverified_context
     disable_warnings()
+    os.environ.setdefault('REQUESTS_CA_BUNDLE', False)
 
 
 class Schedular:
@@ -48,6 +49,8 @@ class Schedular:
     def put_target(self, target):
         # 判断是IP还是域名，加入不同的字段
         serviceType = "domain"
+        if "com" in target:
+            target = "http://" + target
         if is_ip_address_format(target):
             serviceType = "ip"
         elif is_url_format(target):
@@ -198,7 +201,7 @@ class Schedular:
         collector.add_domain(target)
         # 发起请求
         try:
-            r = requests.get(target, timeout=10)
+            r = requests.get(target, timeout=10, verify=False)
             collector.add_domain_info(target,
                                       {"headers": r.headers, "body": r.text, "status_code": r.status_code})
         except Exception as e:
@@ -214,6 +217,8 @@ class Schedular:
                 collector.add_domain_info(target, {"ip": _ip})
             except:
                 pass
+        else:
+            collector.add_domain_info(target, {"ip": hostname})
 
         WorkList = []
         WorkList.append(webeye.poc)
@@ -226,6 +231,7 @@ class Schedular:
         WorkList.append(svnleak.poc)
         WorkList.append(tomcat_leak.poc)
         WorkList.append(whatcms.poc)
+        WorkList.append(wappalyzer.poc)
 
         # with ThreadPoolExecutor(max_workers=len(WorkList)) as executor:
         #     for func in WorkList:
@@ -238,22 +244,29 @@ class Schedular:
             thi.start()
         for thi in th:
             thi.join()
-        fields = ["Langeuage", "Server", "CMS"]
+        fields = ["CMS", "app"]
         infos = collector.get_domain(target)
         _pocs = []
         for field in fields:
             if field in infos:
-                keyword = infos[field]
+                keywords = infos[field]
                 # 远程读取插件
                 pocs = load_remote_poc()
+                iters = []
+                if isinstance(keywords, str):
+                    iters.append(keywords)
+                if isinstance(keywords, list):
+                    iters += keywords
+
                 for poc in pocs:
-                    if poc["name"] == keyword:
-                        webfile = poc["webfile"]
-                        logger.debug("load {0} poc:{1} poc_time:{2}".format(poc["type"], webfile, poc["time"]))
-                        # 加载插件
-                        code = requests.get(webfile).text
-                        obj = load_string_to_module(code, webfile)
-                        _pocs.append(obj)
+                    for keyword in keywords:
+                        if poc["name"] == keyword:
+                            webfile = poc["webfile"]
+                            logger.debug("load {0} poc:{1} poc_time:{2}".format(poc["type"], webfile, poc["time"]))
+                            # 加载插件
+                            code = requests.get(webfile).text
+                            obj = load_string_to_module(code, webfile)
+                            _pocs.append(obj)
 
         # 并发执行插件
         if _pocs:

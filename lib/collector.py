@@ -7,6 +7,7 @@
 import threading
 import copy
 import queue
+import json
 
 
 class Collector:
@@ -59,8 +60,9 @@ class Collector:
         data = copy.deepcopy(self.collect_domains[domain])
         self.collect_lock.release()
         # 删除一些不想显示的key
-        del data["body"]
+        tmp_headers = "\n".join([k + ":" + v for k, v in data["headers"].items()])
         del data["headers"]
+        data["headers"] = tmp_headers
         return data
 
     def get_domain_info(self, domain, k):
@@ -108,9 +110,15 @@ class Collector:
         # domain
         while not self.cache_queue.empty():
             data = self.cache_queue.get()
-            print(data)
+            self.collect_lock.acquire()
+            with open("domain.result.txt", "a+") as f:
+                f.write(json.dumps(data) + ",")
+            self.collect_lock.release()
 
         # ips
         while not self.cache_ips.empty():
             data = self.cache_ips.get()
-            print(data)
+            self.collect_lock.acquire()
+            with open("ips.result.txt", "a+") as f:
+                f.write(json.dumps(data) + ",")
+            self.collect_lock.release()

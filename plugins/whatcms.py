@@ -26,6 +26,8 @@ def poc(domain):
             if path not in cache:
                 try:
                     hh = hack.http(_url)
+                    if hh.status_code != 200:
+                        raise Exception
                     content = hh.content()
                     cache[path] = content
                 except:
