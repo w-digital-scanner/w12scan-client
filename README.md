@@ -31,3 +31,8 @@
 - brew install nmap
 
 sudo运行程序
+
+# IP数据库更新
+- 网络上大部分ip接口都有频率限制，所以IP数据使用GEOIP数据，但不保证数据的时效性，可以通过下载最新数据库解决
+- https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.tar.gz  
+- 放到data/GeoLite2目录下
