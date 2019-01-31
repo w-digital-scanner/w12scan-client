@@ -19,7 +19,8 @@ MASSCAN_DEFAULT_PORT = "21,23,80,443,1433,3306,5432,6379,9200,11211,27017"
 MASSCAN_FULL_SCAN = False  # 是否扫描全端口
 
 # WEB Restful接口地址
-WEB_INTERFACE = ""
+WEB_INTERFACE = "http://127.0.0.1:8000/"
+WEB_INTERFACE_KEY = "hello-w12scan!"
 
 # WEB POCS repository 提供指纹识别对应的poc仓库
 WEB_REPOSITORY = "https://github.com/boy-hack/airbug"

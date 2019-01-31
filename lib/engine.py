@@ -46,8 +46,6 @@ class Schedular:
     def put_target(self, target):
         # 判断是IP还是域名，加入不同的字段
         serviceType = "domain"
-        if "com" in target:
-            target = "http://" + target
         if is_ip_address_format(target):
             serviceType = "ip"
         elif is_url_format(target):
@@ -167,11 +165,11 @@ class Schedular:
                 product = portInfo.get("product", "")
                 version = portInfo.get("version", "")
                 extrainfo = portInfo.get("extrainfo", "")
-                if name == "http" and port != 443:
+                if name == "http":
                     _url = "http://{0}:{1}".format(host, port)
                     self.put_target(_url)
-                elif name == "http" and port == 443:
-                    _url = "https://" + host
+                elif name == "https":
+                    _url = "https://{0}:{1}".format(host, port)
                     self.put_target(_url)
                 result2[host].append(
                     {"port": port, "name": name, "product": product, "version": version, "extrainfo": extrainfo})

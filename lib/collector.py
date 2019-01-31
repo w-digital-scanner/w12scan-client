@@ -8,6 +8,12 @@ import threading
 import copy
 import queue
 import json
+from urllib.parse import urljoin
+
+import requests
+
+from config import WEB_INTERFACE, WEB_INTERFACE_KEY
+from lib.data import logger
 
 
 class Collector:
@@ -110,15 +116,41 @@ class Collector:
         # domain
         while not self.cache_queue.empty():
             data = self.cache_queue.get()
-            self.collect_lock.acquire()
-            with open("domain.result.txt", "a+") as f:
-                f.write(json.dumps(data) + ",")
-            self.collect_lock.release()
+            # self.collect_lock.acquire()
+            # with open("domain.result.txt", "a+") as f:
+            #     f.write(json.dumps(data) + ",")
+            # self.collect_lock.release()
+            _api = urljoin(WEB_INTERFACE, "./api/v1/domain")
+            headers = {
+                "w12scan": WEB_INTERFACE_KEY
+            }
+            try:
+                r = requests.post(_api, data=data, headers=headers)
+            except Exception as e:
+                logger.error("api request faild: {0} ".format(str(e)))
+                continue
+            if r.status_code == 200:
+                status = json.loads(r.text)
+                if status["status"] != 200:
+                    logger.error("api request faild(status!=200) " + status["msg"])
 
         # ips
         while not self.cache_ips.empty():
             data = self.cache_ips.get()
-            self.collect_lock.acquire()
-            with open("ips.result.txt", "a+") as f:
-                f.write(json.dumps(data) + ",")
-            self.collect_lock.release()
+            # self.collect_lock.acquire()
+            # with open("ips.result.txt", "a+") as f:
+            #     f.write(json.dumps(data) + ",")
+            # self.collect_lock.release()
+            _api = urljoin(WEB_INTERFACE, "./api/v1/ip")
+            headers = {
+                "w12scan": WEB_INTERFACE_KEY
+            }
+            try:
+                r = requests.post(_api, data=data, headers=headers)
+            except Exception as e:
+                logger.error("api request faild: {0} ".format(str(e)))
+                continue
+            if r.status_code == 200:
+                status = json.loads(r.text)
+                if status["status"] != 200:
+                    logger.error("api request faild(status!=200) " + status["msg"])
