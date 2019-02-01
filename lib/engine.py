@@ -14,7 +14,6 @@ from queue import Queue
 from urllib.parse import urlparse
 
 import requests
-from urllib3 import disable_warnings
 
 from config import NUM_CACHE_DOMAIN, NUM_CACHE_IP, MASSCAN_DEFAULT_PORT, MASSCAN_FULL_SCAN
 from lib.common import is_ip_address_format, is_url_format
@@ -24,12 +23,6 @@ from plugins import webeye, webtitle, crossdomain, gitleak, iis_parse, phpinfo, 
     ip_location, wappalyzer
 from plugins.masscan import masscan
 from plugins.nmap import nmapscan
-
-
-def init():
-    # hook dispatch
-
-    disable_warnings()
 
 
 class Schedular:
@@ -46,6 +39,8 @@ class Schedular:
     def put_target(self, target):
         # 判断是IP还是域名，加入不同的字段
         serviceType = "domain"
+        if (".c") in target or ".j" in target or ".t" in target:
+            target = "http://" + target
         if is_ip_address_format(target):
             serviceType = "ip"
         elif is_url_format(target):
@@ -162,6 +157,9 @@ class Schedular:
                 if portInfo["state"] != "open":
                     continue
                 name = portInfo.get("name", "")
+                # hand namp bug
+                name = name.replace("\;confidence:50", "")
+
                 product = portInfo.get("product", "")
                 version = portInfo.get("version", "")
                 extrainfo = portInfo.get("extrainfo", "")
@@ -195,7 +193,7 @@ class Schedular:
         collector.add_domain(target)
         # 发起请求
         try:
-            r = requests.get(target, timeout=10, verify=False)
+            r = requests.get(target, timeout=10, verify=False, allow_redirects=False)
             collector.add_domain_info(target,
                                       {"headers": r.headers, "body": r.text, "status_code": r.status_code})
         except Exception as e:

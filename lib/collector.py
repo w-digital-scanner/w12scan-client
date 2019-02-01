@@ -13,7 +13,6 @@ from urllib.parse import urljoin
 import requests
 
 from config import WEB_INTERFACE, WEB_INTERFACE_KEY
-from lib.data import logger
 
 
 class Collector:
@@ -66,9 +65,10 @@ class Collector:
         data = copy.deepcopy(self.collect_domains[domain])
         self.collect_lock.release()
         # 删除一些不想显示的key
-        tmp_headers = "\n".join([k + ":" + v for k, v in data["headers"].items()])
-        del data["headers"]
-        data["headers"] = tmp_headers
+        if data.get("headers"):
+            tmp_headers = "\n".join([k + ":" + v for k, v in data["headers"].items()])
+            del data["headers"]
+            data["headers"] = tmp_headers
         return data
 
     def get_domain_info(self, domain, k):
@@ -122,17 +122,17 @@ class Collector:
             # self.collect_lock.release()
             _api = urljoin(WEB_INTERFACE, "./api/v1/domain")
             headers = {
-                "w12scan": WEB_INTERFACE_KEY
+                "W12SCAN": WEB_INTERFACE_KEY
             }
             try:
-                r = requests.post(_api, data=data, headers=headers)
+                r = requests.post(_api, json=data, headers=headers)
             except Exception as e:
-                logger.error("api request faild: {0} ".format(str(e)))
+                print("api request faild: {0} ".format(str(e)))
                 continue
             if r.status_code == 200:
                 status = json.loads(r.text)
                 if status["status"] != 200:
-                    logger.error("api request faild(status!=200) " + status["msg"])
+                    print("api request faild(status!=200) " + status["msg"])
 
         # ips
         while not self.cache_ips.empty():
@@ -146,11 +146,19 @@ class Collector:
                 "w12scan": WEB_INTERFACE_KEY
             }
             try:
-                r = requests.post(_api, data=data, headers=headers)
+                r = requests.post(_api, json=data, headers=headers)
             except Exception as e:
-                logger.error("api request faild: {0} ".format(str(e)))
+                print("api request faild: {0} ".format(str(e)))
                 continue
             if r.status_code == 200:
                 status = json.loads(r.text)
                 if status["status"] != 200:
-                    logger.error("api request faild(status!=200) " + status["msg"])
+                    print("api request faild(status!=200) " + status["msg"])
+
+
+if __name__ == '__main__':
+    c = Collector()
+    c.add_domain("test.com")
+    c.add_domain_info("test.com", {"xx": "11"})
+    c.send_ok("test.com")
+    c.submit()

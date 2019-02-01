@@ -3,8 +3,8 @@
 # @Time    : 2019/1/14 5:26 PM
 # @Author  : w8ay
 # @File    : data.py
-from lib.collector import Collector
 from lib.log import LOGGER
+from lib.collector import Collector
 
 logger = LOGGER()
 

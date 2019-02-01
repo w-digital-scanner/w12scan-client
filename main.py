@@ -5,8 +5,9 @@
 # @File    : main.py
 import os
 from lib.data import PATHS, logger
-from lib.engine import Schedular, init
+from lib.engine import Schedular
 from config import THREAD_NUM
+from thirdpart.requests import patch_all
 
 
 def module_path():
@@ -22,6 +23,7 @@ def main():
     PATHS.OUTPUT_PATH = os.path.join(PATHS.ROOT_PATH, "output")
     PATHS.DATA_PATH = os.path.join(PATHS.ROOT_PATH, "data")
 
+    patch_all()
     logger.info("Hello W12SCAN !")
     # targets = ["https://x.hacking8.com", "http://www.70xk.com/", "119.98.222.103", "http://188.131.196.108",
     #            "188.131.196.108"]
@@ -33,7 +35,6 @@ def main():
     # domain域名整理（统一格式：无论是域名还是二级目录，右边没有 /），ip cidr模式识别，ip整理
 
     # 访问redis去重验证
-    init()
     schedular = Schedular(threadnum=THREAD_NUM)
     for t in targets:
         schedular.put_target(t)
