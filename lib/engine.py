@@ -158,8 +158,6 @@ class Schedular:
                     continue
                 name = portInfo.get("name", "")
                 # hand namp bug
-                name = name.replace("\;confidence:50", "")
-
                 product = portInfo.get("product", "")
                 version = portInfo.get("version", "")
                 extrainfo = portInfo.get("extrainfo", "")

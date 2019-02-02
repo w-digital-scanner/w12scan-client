@@ -8,7 +8,7 @@
 THREAD_NUM = 20
 
 # Ip的缓存数量
-NUM_CACHE_IP = 150
+NUM_CACHE_IP = 70
 
 # 域名的缓存数量
 NUM_CACHE_DOMAIN = 10

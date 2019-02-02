@@ -1255,7 +1255,7 @@
 				"Python",
 				"Solr",
 				"Java",
-				"PostgreSQL\\;confidence:80"
+				"PostgreSQL"
 			],
 			"website": "ckan.org/"
 		},
@@ -2833,7 +2833,7 @@
 				"X-Powered-By": "HHVM/?([\\d.]+)?\\;version:\\1"
 			},
 			"icon": "HHVM.png",
-			"implies": "PHP\\;confidence:50",
+			"implies": "PHP",
 			"website": "hhvm.com"
 		},
 		"HP": {
@@ -2967,7 +2967,7 @@
 			"cats": [
 				12
 			],
-			"env": "^head$\\;confidence:50",
+			"env": "^head$",
 			"html": "<[^>]*data-headjs-load",
 			"icon": "HeadJS.png",
 			"script": "head\\.(?:core|load)(?:\\.min)?\\.js",
@@ -3536,7 +3536,7 @@
 			"headers": {
 				"X-Content-Encoded-By": "Joomla! ([\\d.]+)\\;version:\\1"
 			},
-			"html": "(?:<div[^>]+id=\"wrapper_r\"|<[^>]+(?:feed|components)/com_|<table[^>]+class=\"pill)\\;confidence:50",
+			"html": "(?:<div[^>]+id=\"wrapper_r\"|<[^>]+(?:feed|components)/com_|<table[^>]+class=\"pill)",
 			"icon": "Joomla.png",
 			"implies": "PHP",
 			"meta": {
@@ -4088,11 +4088,11 @@
 			],
 			"icon": "MOBOTIX.png",
 			"meta": {
-				"author": "MOBOTIX AG\\;confidence:40",
-				"copyright": "MOBOTIX AG\\;confidence:40",
-				"publisher": "MOBOTIX AG\\;confidence:40"
+				"author": "MOBOTIX AG",
+				"copyright": "MOBOTIX AG",
+				"publisher": "MOBOTIX AG"
 			},
-			"url": "control/userimage\\.html\\;confidence:70",
+			"url": "control/userimage\\.html",
 			"website": "mobotix.com"
 		},
 		"MODx": {
@@ -4106,7 +4106,7 @@
 			},
 			"html": [
 				"<a[^>]+>Powered by MODx</a>",
-				"<(?:link|script)[^>]+assets/snippets/\\;confidence:20"
+				"<(?:link|script)[^>]+assets/snippets/"
 			],
 			"icon": "MODx.png",
 			"implies": "PHP",
@@ -4129,7 +4129,7 @@
 				"^(?:Mage|VarienForm)$"
 			],
 			"headers": {
-				"Set-Cookie": "frontend=\\;confidence:50"
+				"Set-Cookie": "frontend="
 			},
 			"html": [
 				"<script [^>]+data-requiremodule=\"mage/\\;version:2",
@@ -4140,8 +4140,8 @@
 			"script": [
 				"js/mage",
 				"skin/frontend/(?:default|(enterprise))\\;version:\\1?Enterprise:Community",
-				"static/_requirejs\\;confidence:50\\;version:2",
-				"static/frontend\\;confidence:20\\;version:2"
+				"static/_requirejs\\;version:2",
+				"static/frontend\\;version:2"
 			],
 			"website": "www.magentocommerce.com"
 		},
@@ -4299,7 +4299,7 @@
 			"cats": [
 				1
 			],
-			"env": "^eidosBase$\\;confidence:99",
+			"env": "^eidosBase$",
 			"html": "<!-- Methode uuid: \"[a-f\\d]+\" ?-->",
 			"icon": "Methode.png",
 			"meta": {
@@ -4318,11 +4318,11 @@
 			"headers": {
 				"Set-Cookie": "ASPSESSION|ASP\\.NET_SessionId",
 				"X-AspNet-Version": "(.+)\\;version:\\1",
-				"X-Powered-By": "ASP\\.NET\\;confidence:50"
+				"X-Powered-By": "ASP\\.NET"
 			},
 			"html": "<input[^>]+name=\"__VIEWSTATE",
 			"icon": "Microsoft ASP.NET.png",
-			"implies": "IIS\\;confidence:50",
+			"implies": "IIS",
 			"url": "\\.aspx(?:$|\\?)",
 			"website": "www.asp.net"
 		},
@@ -4844,7 +4844,7 @@
 				1,
 				6
 			],
-			"html": "<link[^>]* href=[^>]+/web/css/(?:web\\.assets_common/|website\\.assets_frontend/)\\;confidence:25",
+			"html": "<link[^>]* href=[^>]+/web/css/(?:web\\.assets_common/|website\\.assets_frontend/)",
 			"icon": "Odoo.png",
 			"implies": [
 				"Python",
@@ -4855,7 +4855,7 @@
 			"meta": {
 				"generator": "Odoo"
 			},
-			"script": "/web/js/(?:web\\.assets_common/|website\\.assets_frontend/)\\;confidence:25",
+			"script": "/web/js/(?:web\\.assets_common/|website\\.assets_frontend/)",
 			"website": "odoo.com"
 		},
 		"OmniTouch 8660 My Teamwork": {
@@ -5201,9 +5201,9 @@
 				27
 			],
 			"headers": {
-				"Server": "php/?([\\d.]+)?\\;confidence:40\\;version:\\1",
+				"Server": "php/?([\\d.]+)?\\;version:\\1",
 				"Set-Cookie": "PHPSESSID",
-				"X-Powered-By": "php/?([\\d.]+)?\\;confidence:40\\;version:\\1"
+				"X-Powered-By": "php/?([\\d.]+)?\\;version:\\1"
 			},
 			"icon": "PHP.png",
 			"url": "\\.php(?:$|\\?)",
@@ -5526,10 +5526,10 @@
 				6
 			],
 			"env": [
-				"^freeProductTranslation$\\;confidence:25",
-				"^freeProductTranslation$\\;confidence:25",
-				"^priceDisplayMethod$\\;confidence:25",
-				"^priceDisplayPrecision$\\;confidence:25"
+				"^freeProductTranslation$",
+				"^freeProductTranslation$",
+				"^priceDisplayMethod$",
+				"^priceDisplayPrecision$"
 			],
 			"html": "Powered by <a\\s+[^>]+>PrestaShop",
 			"icon": "PrestaShop.png",
@@ -5621,7 +5621,7 @@
 				27
 			],
 			"headers": {
-				"Server": "(?:^|\\s)Python(?:/([\\d.]+))?\\;confidence:50\\;version:\\1"
+				"Server": "(?:^|\\s)Python(?:/([\\d.]+))?\\;version:\\1"
 			},
 			"icon": "Python.png",
 			"website": "python.org"
@@ -5904,7 +5904,7 @@
 			"icon": "RiteCMS.png",
 			"implies": [
 				"PHP",
-				"SQLite\\;confidence:50"
+				"SQLite"
 			],
 			"meta": {
 				"generator": "^RiteCMS(?: (.+))?\\;version:\\1"
@@ -5968,15 +5968,15 @@
 				18
 			],
 			"headers": {
-				"Server": "(?:mod_rails|mod_rack|Phusion(?:\\.|_)Passenger)\\;confidence:50",
-				"X-Powered-By": "(?:mod_rails|mod_rack|Phusion[\\._ ]Passenger)(?: \\(mod_rails/mod_rack\\))?(?: ?/?([\\d\\.]+))?\\;version:\\1\\;confidence:50"
+				"Server": "(?:mod_rails|mod_rack|Phusion(?:\\.|_)Passenger)",
+				"X-Powered-By": "(?:mod_rails|mod_rack|Phusion[\\._ ]Passenger)(?: \\(mod_rails/mod_rack\\))?(?: ?/?([\\d\\.]+))?\\;version:\\1"
 			},
 			"icon": "Ruby on Rails.png",
 			"implies": "Ruby",
 			"meta": {
-				"csrf-param": "authenticity_token\\;confidence:50"
+				"csrf-param": "authenticity_token"
 			},
-			"script": "/assets/application-[a-z\\d]{32}/\\.js\\;confidence:50",
+			"script": "/assets/application-[a-z\\d]{32}/\\.js",
 			"website": "rubyonrails.org"
 		},
 		"Ruxit": {
@@ -5991,7 +5991,7 @@
 			"cats": [
 				12
 			],
-			"env": "^Rx$\\;confidence:20",
+			"env": "^Rx$",
 			"icon": "RxJS.png",
 			"script": "rx(?:\\.\\w+)?(?:\\.compat)?(?:\\.min)?\\.js",
 			"website": "reactivex.io"
@@ -6210,7 +6210,7 @@
 				18
 			],
 			"html": [
-				"(?:<div class=\"ui\\s[^>]+\">)\\;confidence:30",
+				"(?:<div class=\"ui\\s[^>]+\">)",
 				"(?:<link[^>]+semantic(?:\\.css|\\.min\\.css)\">)"
 			],
 			"icon": "Semantic-ui.png",
@@ -6313,7 +6313,7 @@
 			"env": "^shptUrl$",
 			"html": [
 				"<body class=\"shopatron",
-				"<img[^>]+mediacdn\\.shopatron\\.com\\;confidence:50"
+				"<img[^>]+mediacdn\\.shopatron\\.com"
 			],
 			"icon": "Shopatron.png",
 			"meta": {
@@ -6366,7 +6366,7 @@
 			"cats": [
 				6
 			],
-			"html": "<title>Shopware ([\\d\\.]+) [^<]+\\;version:\\1\\;confidence:90",
+			"html": "<title>Shopware ([\\d\\.]+) [^<]+\\;version:\\1",
 			"icon": "Shopware.png",
 			"implies": [
 				"PHP",
@@ -6630,7 +6630,7 @@
 			"html": "<p class=\"footer\">&copy; [-\\d]+ Splunk Inc\\.(?: Splunk ([\\d\\.]+(?: build [\\d\\.]*\\d)?))?[^<]*</p>\\;version:\\1",
 			"icon": "Splunk.png",
 			"meta": {
-				"author": "Splunk Inc\\;confidence:50"
+				"author": "Splunk Inc"
 			},
 			"website": "splunk.com"
 		},
@@ -7207,7 +7207,7 @@
 			"cats": [
 				18
 			],
-			"env": "^Twipsy$\\;confidence:50",
+			"env": "^Twipsy$",
 			"html": [
 				"<style>/\\*!\\* Bootstrap v(\\d\\.\\d\\.\\d)\\;version:\\1",
 				"<link[^>]+?href=\"[^\"]+bootstrap(?:\\.min)?\\.css",
@@ -7241,7 +7241,7 @@
 			],
 			"env": "^typeahead$",
 			"icon": "Twitter typeahead.js.png",
-			"implies": "jQuery\\;confidence:50",
+			"implies": "jQuery",
 			"script": "(?:typeahead|bloodhound)\\.(?:jquery|bundle)?(?:\\.min)?\\.js",
 			"website": "twitter.github.io/typeahead.js"
 		},
@@ -7589,7 +7589,7 @@
 			"script": [
 				"vue(?:\\-|\\.)([\\d.]*\\d)[^/]*\\.js\\;version:\\1",
 				"/([\\d.]+)/vue(?:\\.min)?\\.js\\;version:\\1",
-				"vue.*\\.js\\;confidence:20"
+				"vue.*\\.js"
 			],
 			"website": "vuejs.org"
 		},
@@ -7950,7 +7950,7 @@
 			"cats": [
 				22
 			],
-			"html": "<title>XAMPP(?: Version ([\\d\\.]+))?</title>\\;version:\\1\\;confidence:90",
+			"html": "<title>XAMPP(?: Version ([\\d\\.]+))?</title>\\;version:\\1",
 			"icon": "XAMPP.png",
 			"implies": [
 				"Apache",
@@ -7959,7 +7959,7 @@
 				"Perl"
 			],
 			"meta": {
-				"author": "Kai Oswald Seidler\\;confidence:10"
+				"author": "Kai Oswald Seidler"
 			},
 			"website": "www.apachefriends.org/en/xampp.html"
 		},
@@ -8219,9 +8219,9 @@
 			"html": "<body[^>]+zbxCallPostScripts",
 			"icon": "Zabbix.png",
 			"meta": {
-				"Author": "ZABBIX SIA\\;confidence:70"
+				"Author": "ZABBIX SIA"
 			},
-			"url": "\\/zabbix\\/\\;confidence:30",
+			"url": "\\/zabbix\\/",
 			"website": "zabbix.com"
 		},
 		"Zanox": {
@@ -8334,9 +8334,9 @@
 			"cats": [
 				12
 			],
-			"env": "^basket$\\;confidence:20",
+			"env": "^basket$",
 			"icon": "basket.js.png",
-			"script": "basket.*\\.js\\;confidence:10",
+			"script": "basket.*\\.js",
 			"website": "addyosmani.github.io/basket.js/"
 		},
 		"cPanel": {
@@ -8498,7 +8498,7 @@
 				22
 			],
 			"headers": {
-				"Set-Cookie": "Fe26\\.2\\*\\*\\;confidence:50"
+				"Set-Cookie": "Fe26\\.2\\*\\*"
 			},
 			"icon": "hapi.js.png",
 			"implies": "Node.js",
@@ -8722,7 +8722,7 @@
 			},
 			"icon": "mod_rack.png",
 			"implies": [
-				"Ruby on Rails\\;confidence:50",
+				"Ruby on Rails",
 				"Apache"
 			],
 			"website": "phusionpassenger.com"
@@ -8737,7 +8737,7 @@
 			},
 			"icon": "mod_rails.png",
 			"implies": [
-				"Ruby on Rails\\;confidence:50",
+				"Ruby on Rails",
 				"Apache"
 			],
 			"website": "phusionpassenger.com"
@@ -8763,7 +8763,7 @@
 			},
 			"icon": "mod_wsgi.png",
 			"implies": [
-				"Python\\;confidence:50",
+				"Python",
 				"Apache"
 			],
 			"website": "code.google.com/p/modwsgi"
@@ -8910,7 +8910,7 @@
 			"icon": "phpSQLiteCMS.png",
 			"implies": [
 				"PHP",
-				"SQLite\\;confidence:50"
+				"SQLite"
 			],
 			"meta": {
 				"generator": "^phpSQLiteCMS(?: (.+))?$\\;version:\\1"
