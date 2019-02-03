@@ -39,12 +39,11 @@ class Schedular:
     def put_target(self, target):
         # 判断是IP还是域名，加入不同的字段
         serviceType = "domain"
-        if (".c") in target or ".j" in target or ".t" in target:
-            target = "http://" + target
         if is_ip_address_format(target):
             serviceType = "ip"
         elif is_url_format(target):
             serviceType = "domain"
+            target = target.rstrip('/')
         else:
             serviceType = "other"
 
