@@ -16,6 +16,6 @@ def poc(target):
     '''
     html = collector.get_domain_info(target, "body")
     if html:
-        m = re.search('<title>(.*)?<\/title>', html)
+        m = re.search('<title>(.*)?<\/title>', html, re.IGNORECASE)
         if m:
             collector.add_domain_info(target, {"title": m.group(1)})

@@ -161,7 +161,10 @@ class Schedular:
                 version = portInfo.get("version", "")
                 extrainfo = portInfo.get("extrainfo", "")
                 if name == "http":
-                    _url = "http://{0}:{1}".format(host, port)
+                    if port == 443:
+                        _url = "https://{0}:{1}".format(host, port)
+                    else:
+                        _url = "http://{0}:{1}".format(host, port)
                     self.put_target(_url)
                 elif name == "https":
                     _url = "https://{0}:{1}".format(host, port)
