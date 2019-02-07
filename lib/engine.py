@@ -287,9 +287,11 @@ class Schedular:
             # 多线程启动扫描域名
             for serviceType in serviceTypes:
                 self.hand_domain(serviceType)
+            self.cache_domains = []
         # 对剩余未处理的ip进行处理
         if self.cache_ips:
             serviceTypes = self.cache_ips
             self.hand_ip(serviceTypes)
+            self.cache_ips = []
         # 最后一次提交
         collector.submit()

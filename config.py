@@ -24,3 +24,6 @@ WEB_INTERFACE_KEY = "hello-w12scan!"
 
 # WEB POCS repository 提供指纹识别对应的poc仓库
 WEB_REPOSITORY = "https://github.com/boy-hack/airbug"
+
+# reids数据库
+REDIS_HOST = "127.0.0.1:6379"

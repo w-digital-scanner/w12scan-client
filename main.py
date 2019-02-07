@@ -4,7 +4,9 @@
 # @Author  : w8ay
 # @File    : main.py
 import os
-from lib.data import PATHS, logger
+import threading
+
+from lib.data import PATHS, logger, redis_con
 from lib.engine import Schedular
 from config import THREAD_NUM
 from thirdpart.requests import patch_all
@@ -25,24 +27,29 @@ def main():
 
     patch_all()
     logger.info("Hello W12SCAN !")
-    # targets = ["https://x.hacking8.com", "http://www.70xk.com/", "119.98.222.103", "http://188.131.196.108",
-    #            "188.131.196.108"]
-    with open("1.txt") as f:
-        tt = f.readlines()
 
-    targets = [t.strip() for t in tt]
-    # init path
     # domain域名整理（统一格式：无论是域名还是二级目录，右边没有 /），ip cidr模式识别，ip整理
 
-    # 访问redis去重验证
+    # 访问redis获取目标
+    def redis_get():
+        list_name = "w12scan_scanned"
+        while 1:
+            target = redis_con.blpop(list_name)[1]
+            logger.debug("redis get " + target)
+            schedular.put_target(target)
+
+    t = threading.Thread(target=redis_get, name='LoopThread')
+    t.start()
+
     schedular = Schedular(threadnum=THREAD_NUM)
-    for t in targets:
-        schedular.put_target(t)
+    # for t in targets:
+    #     schedular.put_target(t)
     schedular.start()
     # 启动任务分发调度器
     # while 1:
     #     pass
-    schedular.run()
+    while 1:
+        schedular.run()
 
 
 if __name__ == '__main__':
