@@ -5,6 +5,8 @@
 # @File    : config.py
 
 # 程序运行的线程数
+import os
+
 THREAD_NUM = 20
 
 # Ip的缓存数量
@@ -27,3 +29,9 @@ WEB_REPOSITORY = "https://github.com/boy-hack/airbug"
 
 # reids数据库
 REDIS_HOST = "127.0.0.1:6379"
+
+# docker config
+RUNMODEL = os.environ.get("RUNMODEL") or 'dev'
+if RUNMODEL == "docker":
+    WEB_INTERFACE = os.environ.get("WEB_INTERFACE")
+    REDIS_HOST = os.environ.get("REDIS_HOST")
