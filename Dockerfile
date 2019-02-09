@@ -1,20 +1,14 @@
-FROM alpine:edge
+FROM debian
 MAINTAINER w8ay@qq.com
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 RUN set -x \
-    && apk update \
-    && apk add python3 \
-    && apk add nmap \
-    && apk add libcap \
-    && apk add libpcap-dev \
-    && apk add masscan --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted
+    && apt update \
+    && apt install python3 nmap masscan python3-pip -y
 # install w12scan
 RUN mkdir -p /opt/w12scan-client
 COPY . /opt/w12scan-client
 
 RUN set -x \
-    && pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple -r /opt/w12scan-client/requirements.txt \
-    && rm -f /var/cache/apk/*
+    && pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple -r /opt/w12scan-client/requirements.txt
 
 WORKDIR /opt/w12scan-client
 ENTRYPOINT ["python3","main.py"]
