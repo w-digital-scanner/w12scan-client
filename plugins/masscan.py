@@ -18,24 +18,24 @@ def masscan(target, ports):
 
     with open(output, "r") as f:
         result_json = f.readlines()
-        if result_json:
-            try:
-                del result_json[0]
-                del result_json[-1]
-                open_list = {}
-                for res in result_json:
-                    try:
-                        ip = res.split()[3]
-                        port = res.split()[2]
-                        if ip in open_list:
-                            open_list[ip].append(port)
-                        else:
-                            open_list[ip] = [port]
-                    except:
-                        pass
+    if result_json:
+        try:
+            del result_json[0]
+            del result_json[-1]
+            open_list = {}
+            for res in result_json:
+                try:
+                    p = res.split()
+                    ip = p[3]
+                    port = p[2]
+                    if ip not in open_list:
+                        open_list[ip] = set()
+                    open_list[ip].add(port)
+                except:
+                    pass
 
-            except Exception as e:
-                logger.error("masscan read faild")
+        except Exception as e:
+            logger.error("masscan read faild")
     if open_list:
         return open_list
     return None

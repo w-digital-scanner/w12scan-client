@@ -119,6 +119,7 @@ class Schedular:
         result2 = {}
         # format:{'115.159.39.75': ['80'], '115.159.39.215': ['80', '3306'],}
         for host, ports in result.items():
+            ports = list(ports)
             if host not in result2:
                 result2[host] = []
             result_nmap = nmapscan(host, ports)
