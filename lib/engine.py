@@ -285,7 +285,7 @@ class Schedular:
         # 对剩余未处理的ip进行处理
         if self.cache_ips:
             serviceTypes = self.cache_ips
-            self.hand_ip(serviceTypes, "nmap")
+            self.hand_ip(serviceTypes)
             self.cache_ips = []
         # 最后一次提交
         collector.submit()
