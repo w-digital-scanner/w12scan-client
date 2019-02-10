@@ -8,7 +8,7 @@
 import os
 
 THREAD_NUM = 20
-DEBUG = True
+DEBUG = False
 # Ip的缓存数量
 NUM_CACHE_IP = 70
 

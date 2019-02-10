@@ -107,6 +107,8 @@ class Schedular:
             return None
         result2 = {}
         for port, portInfo in result_nmap.items():
+            if host not in result2:
+                result2[host] = []
             if portInfo["state"] != "open":
                 continue
             name = portInfo.get("name", "")
@@ -159,7 +161,7 @@ class Schedular:
         elif option == "nmap":
             logger.debug("ip:" + repr(IP_LIST))
             for host in IP_LIST:
-                result_nmap = nmapscan(host, ports)
+                result_nmap = nmapscan(host, ports.split(","))
                 tmp_r = self.nmap_result_handle(result_nmap, host=host)
                 if tmp_r:
                     result2.update(tmp_r)

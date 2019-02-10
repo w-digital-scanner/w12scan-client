@@ -39,7 +39,7 @@ def main():
             schedular.put_target(target)
 
     def debug_get():
-        target = "188.131.196.0/24"
+        target = "188.131.196.108"
         schedular.put_target(target)
 
     schedular = Schedular(threadnum=THREAD_NUM)
