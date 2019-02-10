@@ -12,7 +12,7 @@ from urllib.parse import urljoin
 
 import requests
 
-from config import WEB_INTERFACE, WEB_INTERFACE_KEY
+from config import WEB_INTERFACE, WEB_INTERFACE_KEY, DEBUG
 
 
 class Collector:
@@ -120,6 +120,9 @@ class Collector:
             # with open("domain.result.txt", "a+") as f:
             #     f.write(json.dumps(data) + ",")
             # self.collect_lock.release()
+            if DEBUG:
+                print("[submit] " + repr(data))
+                continue
             _api = urljoin(WEB_INTERFACE, "./api/v1/domain")
             headers = {
                 "W12SCAN": WEB_INTERFACE_KEY
@@ -141,6 +144,9 @@ class Collector:
             # with open("ips.result.txt", "a+") as f:
             #     f.write(json.dumps(data) + ",")
             # self.collect_lock.release()
+            if DEBUG:
+                print("[submit] " + repr(data))
+                continue
             _api = urljoin(WEB_INTERFACE, "./api/v1/ip")
             headers = {
                 "w12scan": WEB_INTERFACE_KEY

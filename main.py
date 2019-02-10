@@ -6,9 +6,9 @@
 import os
 import threading
 
+from config import THREAD_NUM, DEBUG
 from lib.data import PATHS, logger, redis_con
 from lib.engine import Schedular
-from config import THREAD_NUM
 from thirdpart.requests import patch_all
 
 
@@ -38,8 +38,9 @@ def main():
             logger.debug("redis get " + target)
             schedular.put_target(target)
 
-    t = threading.Thread(target=redis_get, name='LoopThread')
-    t.start()
+    def debug_get():
+        target = "188.131.196.0/24"
+        schedular.put_target(target)
 
     schedular = Schedular(threadnum=THREAD_NUM)
     # for t in targets:
@@ -48,6 +49,12 @@ def main():
     # 启动任务分发调度器
     # while 1:
     #     pass
+    if DEBUG:
+        func_target = debug_get
+    else:
+        func_target = redis_get
+    t = threading.Thread(target=func_target, name='LoopThread')
+    t.start()
     while 1:
         schedular.run()
 

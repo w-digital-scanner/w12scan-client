@@ -102,76 +102,67 @@ class Schedular:
         for i in range(self.threadNum):
             _thread.start_new_thread(self.receive, ())
 
-    def hand_ip(self, serviceTypes):
+    def nmap_result_handle(self, result_nmap: dict, host):
+        if result_nmap is None:
+            return None
+        result2 = {}
+        for port, portInfo in result_nmap.items():
+            if portInfo["state"] != "open":
+                continue
+            name = portInfo.get("name", "")
+            # hand namp bug
+            product = portInfo.get("product", "")
+            version = portInfo.get("version", "")
+            extrainfo = portInfo.get("extrainfo", "")
+            if "http" in name and "https" not in name:
+                if port == 443:
+                    _url = "https://{0}:{1}".format(host, port)
+                else:
+                    _url = "http://{0}:{1}".format(host, port)
+                self.put_target(_url)
+            elif "https" in name:
+                _url = "https://{0}:{1}".format(host, port)
+                self.put_target(_url)
+            result2[host].append(
+                {"port": port, "name": name, "product": product, "version": version, "extrainfo": extrainfo})
+        return result2
+
+    def hand_ip(self, serviceTypes, option='masscan'):
         IP_LIST = []
+
         for item in serviceTypes:
             IP_LIST.append(item["target"])
         ports = MASSCAN_DEFAULT_PORT
-        if MASSCAN_FULL_SCAN:
-            ports = "1-65535"
-        target = os.path.join(PATHS.OUTPUT_PATH, "target_" + str(time.time()) + ".log")
-        with open(target, "w+") as fp:
-            fp.write('\n'.join(IP_LIST))
-        logger.debug("ip:" + repr(IP_LIST))
-        result = masscan(target, ports)
-        if result is None:
-            return None
         result2 = {}
-        # format:{'115.159.39.75': ['80'], '115.159.39.215': ['80', '3306'],}
-        for host, ports in result.items():
-            ports = list(ports)
-            if host not in result2:
-                result2[host] = []
-            result_nmap = nmapscan(host, ports)
-            if result_nmap is None:
-                for tmp_port in ports:
-                    result2[host].append({"port": tmp_port})
-                continue
-            # return like this dict
-            # {
-            #     49152: {
-            #         'product': 'Microsoft Windows RPC',
-            #         'state': 'open',
-            #         'version': '',
-            #         'name': 'msrpc',
-            #         'conf': '10',
-            #         'extrainfo': '',
-            #         'reason': 'syn-ack',
-            #         'cpe': 'cpe:/o:microsoft:windows'
-            #     },
-            #     49168: {
-            #         'product': 'Microsoft Windows RPC',
-            #         'state': 'open',
-            #         'version': '',
-            #         'name': 'msrpc',
-            #         'conf': '10',
-            #         'extrainfo': '',
-            #         'reason': 'syn-ack',
-            #         'cpe': 'cpe:/o:microsoft:windows'
-            #     }
-            #       version:2.2.15
-            #       product:'Tengine httpd'
-            # }
-            # to solve state:open
-            for port, portInfo in result_nmap.items():
-                if portInfo["state"] != "open":
+        if option == 'masscan':
+            if MASSCAN_FULL_SCAN:
+                ports = "1-65535"
+            target = os.path.join(PATHS.OUTPUT_PATH, "target_" + str(time.time()) + ".log")
+            with open(target, "w+") as fp:
+                fp.write('\n'.join(IP_LIST))
+            logger.debug("ip:" + repr(IP_LIST))
+            result = masscan(target, ports)
+            if result is None:
+                return None
+            # format:{'115.159.39.75': ['80'], '115.159.39.215': ['80', '3306'],}
+            for host, ports in result.items():
+                ports = list(ports)
+                if host not in result2:
+                    result2[host] = []
+                result_nmap = nmapscan(host, ports)
+                if result_nmap is None:
+                    for tmp_port in ports:
+                        result2[host].append({"port": tmp_port})
                     continue
-                name = portInfo.get("name", "")
-                # hand namp bug
-                product = portInfo.get("product", "")
-                version = portInfo.get("version", "")
-                extrainfo = portInfo.get("extrainfo", "")
-                if "http" in name and "https" not in name:
-                    if port == 443:
-                        _url = "https://{0}:{1}".format(host, port)
-                    else:
-                        _url = "http://{0}:{1}".format(host, port)
-                    self.put_target(_url)
-                elif "https" in name:
-                    _url = "https://{0}:{1}".format(host, port)
-                    self.put_target(_url)
-                result2[host].append(
-                    {"port": port, "name": name, "product": product, "version": version, "extrainfo": extrainfo})
+                tmp_r = self.nmap_result_handle(result_nmap, host=host)
+                result2.update(tmp_r)
+        elif option == "nmap":
+            logger.debug("ip:" + repr(IP_LIST))
+            for host in IP_LIST:
+                result_nmap = nmapscan(host, ports)
+                tmp_r = self.nmap_result_handle(result_nmap, host=host)
+                if tmp_r:
+                    result2.update(tmp_r)
 
         data = {}
         for ip in result2.keys():
@@ -292,7 +283,7 @@ class Schedular:
         # 对剩余未处理的ip进行处理
         if self.cache_ips:
             serviceTypes = self.cache_ips
-            self.hand_ip(serviceTypes)
+            self.hand_ip(serviceTypes, "nmap")
             self.cache_ips = []
         # 最后一次提交
         collector.submit()
