@@ -5,10 +5,12 @@
 # @File    : main.py
 import os
 import threading
+import time
 
-from config import THREAD_NUM, DEBUG
-from lib.data import PATHS, logger, redis_con
+from config import THREAD_NUM, DEBUG, NODE_NAME
+from lib.data import PATHS, logger
 from lib.engine import Schedular
+from lib.redis import redis_con
 from thirdpart.requests import patch_all
 
 
@@ -42,17 +44,30 @@ def main():
         target = "188.131.196.108"
         schedular.put_target(target)
 
+    def node_register():
+        first_blood = True
+        while 1:
+            if first_blood:
+                dd = {
+                    "last_time": time.time(),
+                    "running": 0,
+                    "finished": 0
+                }
+                redis_con.hmset(NODE_NAME, dd)
+                first_blood = False
+            else:
+                redis_con.hset(NODE_NAME, "last_time", time.time())
+            time.sleep(50 * 5)
+
     schedular = Schedular(threadnum=THREAD_NUM)
-    # for t in targets:
-    #     schedular.put_target(t)
     schedular.start()
     # 启动任务分发调度器
-    # while 1:
-    #     pass
     if DEBUG:
         func_target = debug_get
     else:
         func_target = redis_get
+    node = threading.Thread(target=node_register)
+    node.start()
     t = threading.Thread(target=func_target, name='LoopThread')
     t.start()
     while 1:

@@ -33,3 +33,9 @@ def get_md5(value):
 def get_filename(filepath, with_ext=True):
     base_name = os.path.basename(filepath)
     return base_name if with_ext else os.path.splitext(base_name)[0]
+
+
+def lstrsub(s: str, sub: str):
+    if s[:len(sub)] == sub:
+        return s[len(sub):]
+    return s

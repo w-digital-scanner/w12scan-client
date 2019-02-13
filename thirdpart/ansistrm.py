@@ -10,6 +10,8 @@ import ctypes
 import logging
 import os
 
+from lib.redis import add_redis_log
+
 
 class ColorizingStreamHandler(logging.StreamHandler):
     # color names to indices
@@ -130,6 +132,7 @@ class ColorizingStreamHandler(logging.StreamHandler):
 
     def format(self, record):
         message = logging.StreamHandler.format(self, record)
+        add_redis_log(message)
         if self.is_tty:
             # Don't colorize any traceback
             parts = message.split('\n', 1)

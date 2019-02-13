@@ -3,7 +3,7 @@
 
 ## 扫描器架构
 
-![jiagou](doc/jiagou.png)
+![jiagou](doc/w12scan.jpg)
 
 ## 插件规范
 参见 [https://github.com/boy-hack/airbug](https://github.com/boy-hack/airbug)队列。
