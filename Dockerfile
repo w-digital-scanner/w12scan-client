@@ -11,7 +11,7 @@ RUN mkdir -p /opt/w12scan-client
 COPY . /opt/w12scan-client
 
 RUN set -x \
-    && pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple -r /opt/w12scan-client/requirements.txt
+    && pip3 install -r /opt/w12scan-client/requirements.txt
 
 WORKDIR /opt/w12scan-client
 ENTRYPOINT ["python3","main.py"]
