@@ -236,14 +236,18 @@ class Schedular:
         fields = ["CMS", "app"]
         infos = collector.get_domain(target)
         _pocs = []
+        temp = {}
         if "CMS" in infos:
             if infos.get("app"):
-                infos["app"].append(infos["CMS"])
+                temp["app"] = []
+                temp["app"].append(infos["CMS"])
             else:
-                infos["app"] = [infos["CMS"]]
+                temp["app"] = [infos["CMS"]]
+            # update domain app
+            collector.add_domain_info(target, temp)
 
-        if infos.get("app"):
-            keywords = infos["app"]
+        if temp.get("app"):
+            keywords = temp["app"]
             # 远程读取插件
             pocs = load_remote_poc()
 
