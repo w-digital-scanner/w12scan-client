@@ -141,9 +141,10 @@ class Schedular:
         if option == 'masscan':
             if MASSCAN_FULL_SCAN:
                 ports = "1-65535"
-            target = os.path.join(PATHS.OUTPUT_PATH, "target_" + str(time.time()) + ".log")
+            target = os.path.join(PATHS.OUTPUT_PATH, "target_{0}.log".format(time.time()))
             with open(target, "w+") as fp:
                 fp.write('\n'.join(IP_LIST))
+
             logger.debug("ip:" + repr(IP_LIST))
             result = masscan(target, ports)
             if result is None:
@@ -235,26 +236,26 @@ class Schedular:
         fields = ["CMS", "app"]
         infos = collector.get_domain(target)
         _pocs = []
-        for field in fields:
-            if field in infos:
-                keywords = infos[field]
-                # 远程读取插件
-                pocs = load_remote_poc()
-                iters = []
-                if isinstance(keywords, str):
-                    iters.append(keywords)
-                if isinstance(keywords, list):
-                    iters += keywords
+        if "CMS" in infos:
+            if infos.get("app"):
+                infos["app"].append(infos["CMS"])
+            else:
+                infos["app"] = [infos["CMS"]]
 
-                for poc in pocs:
-                    for keyword in keywords:
-                        if poc["name"] == keyword:
-                            webfile = poc["webfile"]
-                            logger.debug("load {0} poc:{1} poc_time:{2}".format(poc["type"], webfile, poc["time"]))
-                            # 加载插件
-                            code = requests.get(webfile).text
-                            obj = load_string_to_module(code, webfile)
-                            _pocs.append(obj)
+        if infos.get("app"):
+            keywords = infos["app"]
+            # 远程读取插件
+            pocs = load_remote_poc()
+
+            for poc in pocs:
+                for keyword in keywords:
+                    if poc["name"] == keyword:
+                        webfile = poc["webfile"]
+                        logger.debug("load {0} poc:{1} poc_time:{2}".format(poc["type"], webfile, poc["time"]))
+                        # 加载插件
+                        code = requests.get(webfile).text
+                        obj = load_string_to_module(code, webfile)
+                        _pocs.append(obj)
 
         # 并发执行插件
         if _pocs:
