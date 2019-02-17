@@ -15,11 +15,11 @@ from urllib.parse import urlparse
 
 import requests
 
-from config import NUM_CACHE_DOMAIN, NUM_CACHE_IP, MASSCAN_DEFAULT_PORT, MASSCAN_FULL_SCAN, NODE_NAME
+from config import NUM_CACHE_DOMAIN, NUM_CACHE_IP, MASSCAN_DEFAULT_PORT, MASSCAN_FULL_SCAN
 from lib.common import is_ip_address_format, is_url_format
 from lib.data import logger, PATHS, collector
 from lib.loader import load_remote_poc, load_string_to_module
-from lib.redis import redis_con
+from lib.redis import task_update
 from plugins import webeye, webtitle, crossdomain, gitleak, iis_parse, phpinfo, svnleak, tomcat_leak, whatcms, \
     ip_location, wappalyzer
 from plugins.masscan import masscan
@@ -54,7 +54,7 @@ class Schedular:
         }
 
         self.queue.put(tmp)
-        redis_con.hincrby(NODE_NAME, "running", 1)
+        task_update("tasks", self.queue.qsize())
 
     def put_struct(self, struct):
         self.queue.put(struct)
@@ -62,6 +62,10 @@ class Schedular:
     def receive(self):
         while 1:
             struct = self.queue.get()
+
+            task_update("tasks", self.queue.qsize())
+            task_update("running", 1)
+
             serviceType = struct.get("serviceType", 'other')
             if serviceType == "other":
                 msg = "not matches target:{}".format(repr(struct))
@@ -98,6 +102,8 @@ class Schedular:
                 # 多线程启动扫描域名
                 for serviceType in serviceTypes:
                     self.hand_domain(serviceType)
+            task_update("tasks", self.queue.qsize())
+            task_update("running", -1)
             self.queue.task_done()
 
     def start(self):

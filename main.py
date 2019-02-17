@@ -50,6 +50,7 @@ def main():
             if first_blood:
                 dd = {
                     "last_time": time.time(),
+                    "tasks": 0,
                     "running": 0,
                     "finished": 0
                 }
@@ -66,10 +67,12 @@ def main():
         func_target = debug_get
     else:
         func_target = redis_get
+
     node = threading.Thread(target=node_register)
     node.start()
     t = threading.Thread(target=func_target, name='LoopThread')
     t.start()
+
     while 1:
         schedular.run()
 

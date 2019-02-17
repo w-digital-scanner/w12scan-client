@@ -13,7 +13,7 @@ from urllib.parse import urljoin
 import requests
 
 from config import WEB_INTERFACE, WEB_INTERFACE_KEY, DEBUG, NODE_NAME
-from lib.redis import redis_con
+from lib.redis import redis_con, task_update
 
 
 class Collector:
@@ -99,8 +99,7 @@ class Collector:
         self.cache_queue.put(data)
         self.del_domain(domain)
 
-        redis_con.hincrby(NODE_NAME, "running", -1)
-        redis_con.hincrby(NODE_NAME, "finished", 1)
+        task_update("finished", 1)
 
         if self.cache_queue.qsize() > 10:
             self.submit()
@@ -111,8 +110,7 @@ class Collector:
         self.del_ip(target)
         self.cache_ips.put(data)
 
-        redis_con.hincrby(NODE_NAME, "running", -1)
-        redis_con.hincrby(NODE_NAME, "finished", 1)
+        task_update("finished", 1)
 
         if self.cache_ips.qsize() > 10:
             self.submit()

@@ -30,4 +30,21 @@ def add_redis_log(log):
         redis_con.rpop(node_name)
 
 
+def task_update(key: str, value: int):
+    '''
+
+    :param key:tasks running finished
+    :param value:
+    :return:
+    '''
+    field = ["tasks", "running", "finished"]
+    if key not in field:
+        print("{key} error".format(key=key))
+        return False
+    if key == "running" or key == "finished":
+        redis_con.hincrby(NODE_NAME, key, value)
+    else:
+        redis_con.hset(NODE_NAME, key, value)
+
+
 redis_con = redis_concet()
