@@ -65,7 +65,6 @@ class Schedular:
 
             task_update("tasks", self.queue.qsize())
 
-
             serviceType = struct.get("serviceType", 'other')
             if serviceType == "other":
                 msg = "not matches target:{}".format(repr(struct))
@@ -120,6 +119,7 @@ class Schedular:
         for port, portInfo in result_nmap.items():
             if host not in result2:
                 result2[host] = []
+            task_update("running", -1)
             if portInfo["state"] != "open":
                 continue
             name = portInfo.get("name", "")
@@ -168,6 +168,7 @@ class Schedular:
                     for tmp_port in ports:
                         result2[host].append({"port": tmp_port})
                     continue
+                task_update("running", len(result_nmap))
                 tmp_r = self.nmap_result_handle(result_nmap, host=host)
                 result2.update(tmp_r)
         elif option == "nmap":
@@ -296,12 +297,16 @@ class Schedular:
             serviceTypes = self.cache_domains
             # 多线程启动扫描域名
             for serviceType in serviceTypes:
+                task_update("running", 1)
                 self.hand_domain(serviceType)
+                task_update("running", -1)
             self.cache_domains = []
         # 对剩余未处理的ip进行处理
         if self.cache_ips:
             serviceTypes = self.cache_ips
+            task_update("running", 1)
             self.hand_ip(serviceTypes)
+            task_update("running", -1)
             self.cache_ips = []
         # 最后一次提交
         collector.submit()
