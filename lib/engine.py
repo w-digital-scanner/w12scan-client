@@ -64,7 +64,7 @@ class Schedular:
             struct = self.queue.get()
 
             task_update("tasks", self.queue.qsize())
-            task_update("running", 1)
+
 
             serviceType = struct.get("serviceType", 'other')
             if serviceType == "other":
@@ -85,7 +85,9 @@ class Schedular:
                 if not flag:
                     self.queue.task_done()
                     continue
+                task_update("running", 1)
                 self.hand_ip(serviceTypes)
+                task_update("running", -1)
             elif serviceType == "domain":
                 flag = False
                 self.lock.acquire()
@@ -101,9 +103,10 @@ class Schedular:
                     continue
                 # 多线程启动扫描域名
                 for serviceType in serviceTypes:
+                    task_update("running", 1)
                     self.hand_domain(serviceType)
+                    task_update("running", -1)
             task_update("tasks", self.queue.qsize())
-            task_update("running", -1)
             self.queue.task_done()
 
     def start(self):
