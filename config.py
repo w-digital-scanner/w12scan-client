@@ -37,4 +37,4 @@ if RUNMODEL == "docker":
     REDIS_HOST = os.environ.get("REDIS_HOST")
 
 # 该扫描节点的名称(自定义)
-NODE_NAME = "w12_node_{0}".format(os.environ.get("NODE_NAME", "zhouxingxing"))
+NODE_NAME = "w12_node_{0}".format(os.environ.get("NODE_NAME", "w12ss"))

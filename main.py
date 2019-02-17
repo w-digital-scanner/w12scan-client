@@ -29,6 +29,7 @@ def main():
 
     patch_all()
     logger.info("Hello W12SCAN !")
+    logger.debug("check redis...")
 
     # domain域名整理（统一格式：无论是域名还是二级目录，右边没有 /），ip cidr模式识别，ip整理
 
@@ -41,7 +42,7 @@ def main():
             schedular.put_target(target)
 
     def debug_get():
-        target = "188.131.196.108"
+        target = "https://www.hacking8.com"
         schedular.put_target(target)
 
     def node_register():
