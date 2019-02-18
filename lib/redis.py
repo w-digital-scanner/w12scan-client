@@ -23,6 +23,7 @@ def redis_concet():
         except:
             pass
         time.sleep(3)
+    print("redis check success..")
     pool = redis.ConnectionPool(host=host, port=port,
                                 decode_responses=True)  # host是redis主机，需要redis服务端和客户端都起着 redis默认端口是6379
     redis_con = redis.Redis(connection_pool=pool)
@@ -36,9 +37,9 @@ def add_redis_log(log):
     :return:
     '''
     node_name = "w12_log_{}".format(lstrsub(NODE_NAME, "w12_node_"))
-    redis_con.lpush(node_name, str(log))
-    while redis_con.llen(node_name) > 500:
-        redis_con.rpop(node_name)
+    redis_con.lpush(node_name, repr(log))
+    # while redis_con.llen(node_name) > 500:
+    #     redis_con.rpop(node_name)
 
 
 def task_update(key: str, value: int):

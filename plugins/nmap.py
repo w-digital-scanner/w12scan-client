@@ -15,7 +15,9 @@ def nmapscan(host, ports):
     try:
         ret = nm.scan(host, arguments=argument)
     except nmap.PortScannerError:
-        logger.debug("Nmap PortScannerError host:" + host)
+        logger.debug("Nmap PortScannerError host:{}".format(host))
+        return None
+    except:
         return None
 
     # debug

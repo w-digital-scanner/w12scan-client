@@ -119,7 +119,6 @@ class Schedular:
         for port, portInfo in result_nmap.items():
             if host not in result2:
                 result2[host] = []
-            task_update("running", -1)
             if portInfo["state"] != "open":
                 continue
             name = portInfo.get("name", "")
@@ -155,7 +154,11 @@ class Schedular:
                 fp.write('\n'.join(IP_LIST))
 
             logger.debug("ip:" + repr(IP_LIST))
-            result = masscan(target, ports)
+            try:
+                result = masscan(target, ports)
+            except Exception as e:
+                logger.error("masscan error msg:{}".format(repr(e)))
+                result = None
             if result is None:
                 return None
             # format:{'115.159.39.75': ['80'], '115.159.39.215': ['80', '3306'],}
@@ -163,12 +166,16 @@ class Schedular:
                 ports = list(ports)
                 if host not in result2:
                     result2[host] = []
-                result_nmap = nmapscan(host, ports)
+                task_update("running", 1)
+                try:
+                    result_nmap = nmapscan(host, ports)
+                except:
+                    result_nmap = None
+                task_update("running", -1)
                 if result_nmap is None:
                     for tmp_port in ports:
                         result2[host].append({"port": tmp_port})
                     continue
-                task_update("running", len(result_nmap))
                 tmp_r = self.nmap_result_handle(result_nmap, host=host)
                 result2.update(tmp_r)
         elif option == "nmap":
@@ -243,7 +250,6 @@ class Schedular:
             thi.start()
         for thi in th:
             thi.join()
-        fields = ["CMS", "app"]
         infos = collector.get_domain(target)
         _pocs = []
         temp = {}

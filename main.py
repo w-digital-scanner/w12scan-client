@@ -38,7 +38,6 @@ def main():
         list_name = "w12scan_scanned"
         while 1:
             target = redis_con.blpop(list_name)[1]
-            logger.debug("redis get " + target)
             schedular.put_target(target)
 
     def debug_get():
