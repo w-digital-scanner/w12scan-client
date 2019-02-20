@@ -614,5 +614,22 @@
       "option": "keyword",
       "content": "#tw p .t_img{background:url(images/img.gif)"
     }
+  ],
+  "axis2": [
+    {
+      "path": "/axis2/axis2-admin/login",
+      "option": "keyword",
+      "content": "Axis2"
+    },
+    {
+      "path": "/axis2/axis2-web/images/asf-logo.gif",
+      "option": "md5",
+      "content": "83fa69bb142b2d213d437be46abd64c5"
+    },
+    {
+      "path": "/axis2/axis2-web/images/axis_l.jpg",
+      "option": "md5",
+      "content": "830fb825643b5996062aba8a78e3bf24"
+    }
   ]
 }

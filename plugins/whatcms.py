@@ -4,11 +4,13 @@
 # @Author  : w8ay
 # @File    : whatcms.py
 # 精简版的whatcms
-import os, json
 import hashlib
+import json
+import os
 
-from lib.data import collector, PATHS, logger
 import HackRequests
+
+from lib.data import collector, PATHS
 
 
 def poc(domain):
