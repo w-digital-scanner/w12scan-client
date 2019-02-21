@@ -38,8 +38,8 @@ def add_redis_log(log):
     '''
     node_name = "w12_log_{}".format(lstrsub(NODE_NAME, "w12_node_"))
     redis_con.lpush(node_name, repr(log))
-    # while redis_con.llen(node_name) > 500:
-    #     redis_con.rpop(node_name)
+    while redis_con.llen(node_name) > 500:
+        redis_con.rpop(node_name)
 
 
 def task_update(key: str, value: int):
