@@ -10,6 +10,9 @@ import redis  # 导入redis模块，通过python操作redis 也可以直接在re
 from config import NODE_NAME
 from config import REDIS_HOST
 from lib.common import lstrsub
+import threading
+
+redis_lock = threading.Lock()
 
 
 def redis_concet():
@@ -37,9 +40,11 @@ def add_redis_log(log):
     :return:
     '''
     node_name = "w12_log_{}".format(lstrsub(NODE_NAME, "w12_node_"))
+    redis_lock.acquire()
     redis_con.lpush(node_name, repr(log))
     while redis_con.llen(node_name) > 500:
         redis_con.rpop(node_name)
+    redis_lock.release()
 
 
 def task_update(key: str, value: int):
@@ -49,6 +54,7 @@ def task_update(key: str, value: int):
     :param value:
     :return:
     '''
+    redis_lock.acquire()
     field = ["tasks", "running", "finished"]
     if key not in field:
         print("{key} error".format(key=key))
@@ -57,6 +63,7 @@ def task_update(key: str, value: int):
         redis_con.hincrby(NODE_NAME, key, value)
     else:
         redis_con.hset(NODE_NAME, key, value)
+    redis_lock.release()
 
 
 redis_con = redis_concet()

@@ -4,16 +4,16 @@
 # @Author  : w8ay
 # @File    : collector.py
 # 收集器，用于收集信息传递参数
-import threading
 import copy
-import queue
 import json
+import queue
+import threading
 from urllib.parse import urljoin
 
 import requests
 
-from config import WEB_INTERFACE, WEB_INTERFACE_KEY, DEBUG, NODE_NAME
-from lib.redis import redis_con, task_update
+from config import WEB_INTERFACE, WEB_INTERFACE_KEY, DEBUG
+from lib.redis import task_update
 
 
 class Collector:

@@ -85,7 +85,10 @@ class Schedular:
                     self.queue.task_done()
                     continue
                 task_update("running", 1)
-                self.hand_ip(serviceTypes)
+                try:
+                    self.hand_ip(serviceTypes)
+                except Exception as e:
+                    logger.error("hand ip error:{}".format(repr(e)))
                 task_update("running", -1)
             elif serviceType == "domain":
                 flag = False
@@ -103,10 +106,13 @@ class Schedular:
                 # 多线程启动扫描域名
                 for serviceType in serviceTypes:
                     task_update("running", 1)
-                    self.hand_domain(serviceType)
+                    try:
+                        self.hand_domain(serviceType)
+                    except Exception as e:
+                        logger.error("hand domain error:{}".format(repr(e)))
                     task_update("running", -1)
-            task_update("tasks", self.queue.qsize())
             self.queue.task_done()
+            task_update("tasks", self.queue.qsize())
 
     def start(self):
         for i in range(self.threadNum):
@@ -316,3 +322,4 @@ class Schedular:
             self.cache_ips = []
         # 最后一次提交
         collector.submit()
+        task_update("tasks", self.queue.qsize())
