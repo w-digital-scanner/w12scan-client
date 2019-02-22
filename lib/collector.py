@@ -63,7 +63,10 @@ class Collector:
 
     def get_domain(self, domain):
         self.collect_lock.acquire()
-        data = copy.deepcopy(self.collect_domains[domain])
+        if domain in self.collect_domains:
+            data = copy.deepcopy(self.collect_domains[domain])
+        else:
+            data = {}
         self.collect_lock.release()
         # 删除一些不想显示的key
         if data.get("headers"):
