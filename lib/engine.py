@@ -21,7 +21,7 @@ from lib.data import logger, PATHS, collector
 from lib.loader import load_remote_poc, load_string_to_module
 from lib.redis import task_update
 from plugins import webeye, webtitle, crossdomain, gitleak, iis_parse, phpinfo, svnleak, tomcat_leak, whatcms, \
-    ip_location, wappalyzer
+    ip_location, wappalyzer, bakfile
 from plugins.masscan import masscan
 from plugins.nmap import nmapscan
 
@@ -244,6 +244,7 @@ class Schedular:
         WorkList.append(tomcat_leak.poc)
         WorkList.append(whatcms.poc)
         WorkList.append(wappalyzer.poc)
+        WorkList.append(bakfile.poc)
 
         # with ThreadPoolExecutor(max_workers=len(WorkList)) as executor:
         #     for func in WorkList:

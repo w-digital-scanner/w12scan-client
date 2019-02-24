@@ -61,7 +61,6 @@ www.tar.gz
         listFile.append(new)
 
     warning_list = []
-    print(len(listFile))
     for payload in listFile:
         loads = url + payload
         try:
