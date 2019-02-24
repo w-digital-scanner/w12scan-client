@@ -235,7 +235,6 @@ class Schedular:
         WorkList = []
         WorkList.append(webeye.poc)
         WorkList.append(webtitle.poc)
-        # WorkList.append(bakfile.poc)
         WorkList.append(crossdomain.poc)
         WorkList.append(gitleak.poc)
         WorkList.append(iis_parse.poc)
@@ -252,9 +251,8 @@ class Schedular:
         th = []
         for func in WorkList:
             i = threading.Thread(target=func, args=(target,))
+            i.start()
             th.append(i)
-        for thi in th:
-            thi.start()
         for thi in th:
             thi.join()
         infos = collector.get_domain(target)

@@ -8,7 +8,7 @@ import hashlib
 import json
 import os
 
-import HackRequests
+import requests
 
 from lib.data import collector, PATHS
 
@@ -18,18 +18,22 @@ def poc(domain):
     if cms:
         return False
     data = read_config()
-    hack = HackRequests.hackRequests()
     cache = {}
+
+    header = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"}
     for k, v in data.items():
         for item in v:
             path = item["path"]
             _url = domain + path
-
             if path not in cache:
                 try:
-                    hh = hack.http(_url)
+                    r = requests.head(_url, timeout=10, headers=header)
+                    if r.status_code != 200:
+                        continue
+                    hh = requests.get(_url, headers=header)
                     if hh.status_code != 200:
-                        raise Exception
+                        continue
                     content = hh.content()
                     cache[path] = content
                 except:

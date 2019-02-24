@@ -62,13 +62,15 @@ www.tar.gz
 
     warning_list = []
     for payload in listFile:
-        loads = url + payload
+        loads = url + "/" + payload
         try:
             header = dict()
             header[
                 "User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"
-            r = requests.get(loads, headers=header, timeout=5)
-
+            r = requests.head(loads, headers=header, timeout=7)
+            if r.status_code != 200:
+                continue
+            r = requests.get(loads, header=header, timeout=7)
             if r.status_code == 200 and "Content-Type" in r.headers and "application" in r.headers["Content-Type"]:
                 warning_list.append("[BAKFILE] " + loads)
         except Exception:
@@ -77,6 +79,5 @@ www.tar.gz
     # In order to  solve the misreport
     if len(warning_list) > 6:
         return False
-    else:
-        collector.add_domain_bug(arg, {"bakfile": warning_list})
-        return True
+    elif warning_list:
+        collector.add_domain_bug(url, {"bakfile": repr(warning_list)})

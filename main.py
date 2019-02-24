@@ -4,6 +4,7 @@
 # @Author  : w8ay
 # @File    : main.py
 import os
+import sys
 import threading
 import time
 
@@ -40,7 +41,7 @@ def main():
             schedular.put_target(target)
 
     def debug_get():
-        target = "https://x.hacking8.com"
+        target = "https://www.freebuf.com"
         schedular.put_target(target)
 
     def node_register():
@@ -77,4 +78,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as e:
+        logger.error("main error:{} {}".format(Exception, e))
+        logger.error(repr(sys.exc_info()))
