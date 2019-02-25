@@ -6,13 +6,13 @@
 - `config.py`中定义了扫描的相关配置，你可以设置masscan扫描的`rate`，是否扫描全端口(默认扫描部分端口)，线程数以及节点名称等等...
 
 ## docker编译
-- 本仓库所有代码提交都会自动编译到dockerhub上，所以你无需下载这里的仓库。你只需要按照(https://github.com/boy-hack/w12scan)[https://github.com/boy-hack/w12scan]的要求运行即可。
+- 本仓库所有代码提交都会自动编译到dockerhub上，所以你无需下载这里的仓库。你只需要按照[https://github.com/boy-hack/w12scan](https://github.com/boy-hack/w12scan)的要求运行即可。
 - 除非你想自己修改一些配置可以使用如下命令,在本文件目录下
 ```bash
-docker build -t w12scan-client:lastest .
-docker tag w12scan-client:latest boyhack/w12scan-client
+$docker build -t w12scan-client:lastest .
+$docker tag w12scan-client:latest boyhack/w12scan-client
 ```
-再按照(https://github.com/boy-hack/w12scan)[https://github.com/boy-hack/w12scan]的要求运行即可。
+再按照[https://github.com/boy-hack/w12scan](https://github.com/boy-hack/w12scan)的要求运行即可。
 
 # IP数据库更新
 - 网络上大部分ip接口都有频率限制，所以IP数据使用GEOIP数据，但不保证数据的时效性，可以通过下载最新数据库解决
