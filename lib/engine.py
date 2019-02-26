@@ -243,7 +243,7 @@ class Schedular:
         WorkList.append(tomcat_leak.poc)
         WorkList.append(whatcms.poc)
         WorkList.append(wappalyzer.poc)
-        WorkList.append(bakfile.poc)
+        # WorkList.append(bakfile.poc) # 去除备份文件扫描模块，原因：太费时
 
         # with ThreadPoolExecutor(max_workers=len(WorkList)) as executor:
         #     for func in WorkList:
