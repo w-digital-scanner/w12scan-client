@@ -21,7 +21,7 @@ from lib.data import logger, PATHS, collector
 from lib.loader import load_remote_poc, load_string_to_module
 from lib.redis import task_update
 from plugins import webeye, webtitle, crossdomain, gitleak, iis_parse, phpinfo, svnleak, tomcat_leak, whatcms, \
-    ip_location, wappalyzer, bakfile
+    ip_location, wappalyzer, directory_browse
 from plugins.masscan import masscan
 from plugins.nmap import nmapscan
 
@@ -243,6 +243,7 @@ class Schedular:
         WorkList.append(tomcat_leak.poc)
         WorkList.append(whatcms.poc)
         WorkList.append(wappalyzer.poc)
+        WorkList.append(directory_browse.poc)
         # WorkList.append(bakfile.poc) # 去除备份文件扫描模块，原因：太费时
 
         # with ThreadPoolExecutor(max_workers=len(WorkList)) as executor:
