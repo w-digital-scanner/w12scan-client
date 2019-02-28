@@ -193,9 +193,10 @@ class Wappalyzer(object):
 def poc(target):
     html = collector.get_domain_info(target, "body")
     headers = collector.get_domain_info(target, "headers")
+    # 为了速度，长度超过一百万的就放弃了~
+    if len(html) > 1000000:
+        html = ''
     wappalyzer = Wappalyzer.latest()
     b = wappalyzer.analyze(html, headers)
     if b:
         collector.add_domain_info(target, {"app": list(b)})
-
-

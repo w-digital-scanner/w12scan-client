@@ -220,6 +220,7 @@ class Schedular:
             logger.error("request url error:" + str(e))
             collector.del_domain(target)
             return
+        logger.debug("target:{} over,start to scan".format(target))
 
         # Get hostname
         hostname = urlparse(target).netloc.split(":")[0]
@@ -244,6 +245,7 @@ class Schedular:
         WorkList.append(whatcms.poc)
         WorkList.append(wappalyzer.poc)
         WorkList.append(directory_browse.poc)
+
         # WorkList.append(bakfile.poc) # 去除备份文件扫描模块，原因：太费时
 
         # with ThreadPoolExecutor(max_workers=len(WorkList)) as executor:
@@ -256,6 +258,8 @@ class Schedular:
             th.append(i)
         for thi in th:
             thi.join()
+
+        logger.debug("target:{} End of scan".format(target))
         infos = collector.get_domain(target)
         _pocs = []
         temp = {}

@@ -41,7 +41,7 @@ def main():
             schedular.put_target(target)
 
     def debug_get():
-        target = "https://www.freebuf.com"
+        target = "http://stun.tuniu.com"
         schedular.put_target(target)
 
     def node_register():
