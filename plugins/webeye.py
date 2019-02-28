@@ -46,7 +46,9 @@ def poc(target):
                 discern_from_index(name, discern_type, key, reg)
     for i in result:
         try:
-            k, v = i.split(":")
+            k, *v = i.split(":")
+            v = ' '.join(v)
+            # 'X-Powered-By:Servlet 2.4; JBoss-4.0.3SP1 (build: CVSTag=JBoss_4_0_3_SP1 date=200510231054)/Tomcat-5.5'"
             result_dict[k] = v
         except:
             logger.error("webeye error split:" + repr(i))
