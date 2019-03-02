@@ -27,6 +27,9 @@ WEB_INTERFACE_KEY = "hello-w12scan!"
 # WEB POCS repository 提供指纹识别对应的poc仓库
 WEB_REPOSITORY = "https://github.com/boy-hack/airbug"
 
+# 是否用 plugins目录下的插件进行扫描探，为false将不会进行探测和使用airbug项目进行攻击
+IS_START_PLUGINS = True
+
 # reids数据库
 REDIS_HOST = "127.0.0.1:6379"
 

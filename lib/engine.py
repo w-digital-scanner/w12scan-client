@@ -15,7 +15,7 @@ from urllib.parse import urlparse
 
 import requests
 
-from config import NUM_CACHE_DOMAIN, NUM_CACHE_IP, MASSCAN_DEFAULT_PORT, MASSCAN_FULL_SCAN
+from config import NUM_CACHE_DOMAIN, NUM_CACHE_IP, MASSCAN_DEFAULT_PORT, MASSCAN_FULL_SCAN, IS_START_PLUGINS
 from lib.common import is_ip_address_format, is_url_format
 from lib.data import logger, PATHS, collector
 from lib.loader import load_remote_poc, load_string_to_module
@@ -236,15 +236,17 @@ class Schedular:
         WorkList = []
         WorkList.append(webeye.poc)
         WorkList.append(webtitle.poc)
-        WorkList.append(crossdomain.poc)
-        WorkList.append(gitleak.poc)
-        WorkList.append(iis_parse.poc)
-        WorkList.append(phpinfo.poc)
-        WorkList.append(svnleak.poc)
-        WorkList.append(tomcat_leak.poc)
-        WorkList.append(whatcms.poc)
         WorkList.append(wappalyzer.poc)
-        WorkList.append(directory_browse.poc)
+
+        if IS_START_PLUGINS:
+            WorkList.append(crossdomain.poc)
+            WorkList.append(directory_browse.poc)
+            WorkList.append(gitleak.poc)
+            WorkList.append(iis_parse.poc)
+            WorkList.append(phpinfo.poc)
+            WorkList.append(svnleak.poc)
+            WorkList.append(tomcat_leak.poc)
+            WorkList.append(whatcms.poc)
 
         # WorkList.append(bakfile.poc) # 去除备份文件扫描模块，原因：太费时
 
@@ -263,7 +265,7 @@ class Schedular:
         infos = collector.get_domain(target)
         _pocs = []
         temp = {}
-        if "CMS" in infos:
+        if IS_START_PLUGINS and "CMS" in infos:
             if infos.get("app"):
                 temp["app"] = []
                 temp["app"].append(infos["CMS"])
