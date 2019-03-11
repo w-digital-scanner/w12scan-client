@@ -21,7 +21,7 @@ from lib.data import logger, PATHS, collector
 from lib.loader import load_remote_poc, load_string_to_module
 from lib.redis import task_update
 from plugins import webeye, webtitle, crossdomain, gitleak, iis_parse, phpinfo, svnleak, tomcat_leak, whatcms, \
-    ip_location, wappalyzer, directory_browse
+    ip_location, wappalyzer, directory_browse, password_found
 from plugins.masscan import masscan
 from plugins.nmap import nmapscan
 
@@ -237,6 +237,7 @@ class Schedular:
         WorkList.append(webeye.poc)
         WorkList.append(webtitle.poc)
         WorkList.append(wappalyzer.poc)
+        WorkList.append(password_found.poc)
 
         if IS_START_PLUGINS:
             WorkList.append(crossdomain.poc)
