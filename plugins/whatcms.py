@@ -34,7 +34,7 @@ def poc(domain):
                     hh = requests.get(_url, headers=header)
                     if hh.status_code != 200:
                         continue
-                    content = hh.content()
+                    content = hh.content
                     cache[path] = content
                 except:
                     continue
