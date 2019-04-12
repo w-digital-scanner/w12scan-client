@@ -18,7 +18,7 @@ redis_lock = threading.Lock()
 
 def redis_concet():
     host, port = REDIS_HOST.split(":")
-    r = redis.Redis(host=host, port=port)
+    r = redis.Redis(host=host, port=port,password=REDIS_PASSWORD)
     while 1:
         print("redis check...")
         try:
