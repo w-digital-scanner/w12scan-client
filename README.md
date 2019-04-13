@@ -12,7 +12,7 @@ client的思想是接收到哪些数据(url,ip)就只会跑这些，不会根据
 - 本仓库所有代码提交都会自动编译到dockerhub上，所以你无需下载这里的仓库。你只需要按照[https://github.com/boy-hack/w12scan](https://github.com/boy-hack/w12scan)的要求运行即可。
 - 除非你想自己修改一些配置可以使用如下命令,在本文件目录下
 ```bash
-$docker build -t w12scan-client:lastest .
+$docker build -t w12scan-client:latest .
 $docker tag w12scan-client:latest boyhack/w12scan-client
 ```
 再按照[https://github.com/boy-hack/w12scan](https://github.com/boy-hack/w12scan)的要求运行即可。
