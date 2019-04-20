@@ -18,7 +18,7 @@ def poc(arg):
             "User-Agent"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"
         r = requests.get(url, headers=header, timeout=5, allow_redirects=False)
         if r.status_code == 200 and "text/html" in r.headers.get("Content-Type", ""):
-            if re.search('<(html|title)', r.text, re.I | re.M | re.S):
+            if not re.search('<(html|title)', r.text, re.I | re.M | re.S):
                 collector.add_domain_bug(arg, {"iis parse": url})
         else:
             return False
