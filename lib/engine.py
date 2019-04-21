@@ -233,21 +233,17 @@ class Schedular:
         else:
             collector.add_domain_info(target, {"ip": hostname})
 
-        WorkList = []
-        WorkList.append(webeye.poc)
-        WorkList.append(webtitle.poc)
-        WorkList.append(wappalyzer.poc)
-        WorkList.append(password_found.poc)
+        work_list = [webeye.poc, webtitle.poc, wappalyzer.poc, password_found.poc]
 
         if IS_START_PLUGINS:
-            WorkList.append(crossdomain.poc)
-            WorkList.append(directory_browse.poc)
-            WorkList.append(gitleak.poc)
-            WorkList.append(iis_parse.poc)
-            WorkList.append(phpinfo.poc)
-            WorkList.append(svnleak.poc)
-            WorkList.append(tomcat_leak.poc)
-            WorkList.append(whatcms.poc)
+            work_list.append(crossdomain.poc)
+            work_list.append(directory_browse.poc)
+            work_list.append(gitleak.poc)
+            work_list.append(iis_parse.poc)
+            work_list.append(phpinfo.poc)
+            work_list.append(svnleak.poc)
+            work_list.append(tomcat_leak.poc)
+            work_list.append(whatcms.poc)
 
         # WorkList.append(bakfile.poc) # 去除备份文件扫描模块，原因：太费时
 
@@ -255,12 +251,15 @@ class Schedular:
         #     for func in WorkList:
         #         executor.submit(func, target)
         th = []
-        for func in WorkList:
-            i = threading.Thread(target=func, args=(target,))
-            i.start()
-            th.append(i)
-        for thi in th:
-            thi.join()
+        try:
+            for func in work_list:
+                i = threading.Thread(target=func, args=(target,))
+                i.start()
+                th.append(i)
+            for thi in th:
+                thi.join()
+        except Exception as e:
+            logger.error("domain plugin threading error {}:{}".format(repr(Exception), str(e)))
 
         logger.debug("target:{} End of scan".format(target))
         infos = collector.get_domain(target)
@@ -302,7 +301,7 @@ class Schedular:
                     res = f.result()
                 except Exception as e:
                     res = None
-                    logger.error("domain:{} error:{}".format(target, str(e)))
+                    logger.error("load poc error:{} error:{}".format(target, str(e)))
                 if res:
                     name = res.get("name") or "scan_" + str(time.time())
                     collector.add_domain_bug(target, {name: res})

@@ -4,6 +4,7 @@
 # @Author  : w8ay
 # @File    : main.py
 import os
+import random
 import sys
 import threading
 import time
@@ -36,9 +37,11 @@ def main():
     # 访问redis获取目标
     def redis_get():
         list_name = "w12scan_scanned"
-        while 1:
+        while redis_con.llen(list_name) > 0:
             target = redis_con.blpop(list_name)[1]
             schedular.put_target(target)
+        time.sleep(random.randint(1, 10))
+        redis_get()
 
     def debug_get():
         target = "http://stun.tuniu.com"
@@ -68,8 +71,11 @@ def main():
     else:
         func_target = redis_get
 
+    # 与WEB的通信线程
     node = threading.Thread(target=node_register)
     node.start()
+
+    # 队列下发线程
     t = threading.Thread(target=func_target, name='LoopThread')
     t.start()
 
