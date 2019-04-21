@@ -15,9 +15,9 @@ def poc(arg, **kwargs):
     URL = arg
     netloc = urlparse(arg).netloc
     flag_list = [
-        "<title>index of",
-        "<title>directory listing for",
-        "<title>{} - /".format(netloc)
+        "index of",
+        "directory listing for",
+        "{} - /".format(netloc)
     ]
     hack = HackRequests.hackRequests()
     url_list = [
@@ -31,7 +31,11 @@ def poc(arg, **kwargs):
         if hh.status_code == 404:
             continue
         for i in flag_list:
-            if i in hh.text():
+            try:
+                html = hh.text()
+            except:
+                html = ""
+            if i in html:
                 result = {
                     "name": "web目录浏览",  # 插件名称
                     "content": "通过此功能可获取web目录程序结构",  # 插件返回内容详情，会造成什么后果。

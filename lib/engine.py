@@ -7,6 +7,7 @@
 import _thread
 import os
 import socket
+import sys
 import threading
 import time
 from concurrent import futures
@@ -89,6 +90,7 @@ class Schedular:
                     self.hand_ip(serviceTypes)
                 except Exception as e:
                     logger.error("hand ip error:{}".format(repr(e)))
+                    logger.error(repr(sys.exc_info()))
                 task_update("running", -1)
             elif serviceType == "domain":
                 flag = False
@@ -110,6 +112,7 @@ class Schedular:
                         self.hand_domain(serviceType)
                     except Exception as e:
                         logger.error("hand domain error:{}".format(repr(e)))
+                        logger.error(repr(sys.exc_info()))
                     task_update("running", -1)
             self.queue.task_done()
             task_update("tasks", self.queue.qsize())
@@ -316,14 +319,20 @@ class Schedular:
             # 多线程启动扫描域名
             for serviceType in serviceTypes:
                 task_update("running", 1)
-                self.hand_domain(serviceType)
+                try:
+                    self.hand_domain(serviceType)
+                except:
+                    logger.error(repr(sys.exc_info()))
                 task_update("running", -1)
             self.cache_domains = []
         # 对剩余未处理的ip进行处理
         if self.cache_ips:
             serviceTypes = self.cache_ips
             task_update("running", 1)
-            self.hand_ip(serviceTypes)
+            try:
+                self.hand_ip(serviceTypes)
+            except:
+                logger.error(repr(sys.exc_info()))
             task_update("running", -1)
             self.cache_ips = []
         # 最后一次提交
