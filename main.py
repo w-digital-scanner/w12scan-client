@@ -37,11 +37,11 @@ def main():
     # 访问redis获取目标
     def redis_get():
         list_name = "w12scan_scanned"
-        while redis_con.llen(list_name) > 0:
+        while 1:
             target = redis_con.blpop(list_name)[1]
             schedular.put_target(target)
-        time.sleep(random.randint(1, 10))
-        redis_get()
+
+        # redis_get()
 
     def debug_get():
         target = "http://stun.tuniu.com"
