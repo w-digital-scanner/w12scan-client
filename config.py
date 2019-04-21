@@ -9,6 +9,7 @@ import os
 
 THREAD_NUM = 40
 DEBUG = False
+LOGGER_LEVEL = 1 if DEBUG else 2
 # Ip的缓存数量
 NUM_CACHE_IP = 256
 
@@ -21,7 +22,7 @@ MASSCAN_DEFAULT_PORT = "21,22,23,80-90,161,389,443,445,873,1099,1433,1521,1900,2
 MASSCAN_FULL_SCAN = False  # 是否扫描全端口
 
 # WEB Restful接口地址
-WEB_INTERFACE = os.environ.get("WEB_INTERFACE",default="http://127.0.0.1:8000/")
+WEB_INTERFACE = os.environ.get("WEB_INTERFACE", default="http://127.0.0.1:8000/")
 WEB_INTERFACE_KEY = "hello-w12scan!"
 
 # WEB POCS repository 提供指纹识别对应的poc仓库
@@ -31,8 +32,8 @@ WEB_REPOSITORY = "https://github.com/boy-hack/airbug"
 IS_START_PLUGINS = True
 
 # reids数据库
-REDIS_HOST = os.environ.get("REDIS_HOST",default="127.0.0.1:6379")
-REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD",default="") 
+REDIS_HOST = os.environ.get("REDIS_HOST", default="127.0.0.1:6379")
+REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD", default="")
 
 # 该扫描节点的名称(自定义)
 NODE_NAME = "w12_node_{0}".format(os.environ.get("NODE_NAME", "bilibibi"))
