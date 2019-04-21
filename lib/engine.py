@@ -216,7 +216,7 @@ class Schedular:
         collector.add_domain(target)
         # 发起请求
         try:
-            r = requests.get(target, timeout=10, verify=False, allow_redirects=False)
+            r = requests.get(target, timeout=30, verify=False, allow_redirects=False)
             collector.add_domain_info(target,
                                       {"headers": r.headers, "body": r.text, "status_code": r.status_code})
         except Exception as e:
