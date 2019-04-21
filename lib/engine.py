@@ -250,19 +250,21 @@ class Schedular:
 
         # WorkList.append(bakfile.poc) # 去除备份文件扫描模块，原因：太费时
 
-        # with ThreadPoolExecutor(max_workers=len(WorkList)) as executor:
-        #     for func in WorkList:
-        #         executor.submit(func, target)
-        th = []
-        try:
-            for func in work_list:
-                i = threading.Thread(target=func, args=(target,))
-                i.start()
-                th.append(i)
-            for thi in th:
-                thi.join()
-        except Exception as e:
-            logger.error("domain plugin threading error {}:{}".format(repr(Exception), str(e)))
+        # th = []
+        # try:
+        #     for func in work_list:
+        #         i = threading.Thread(target=func, args=(target,))
+        #         i.start()
+        #         th.append(i)
+        #     for thi in th:
+        #         thi.join()
+        # except Exception as e:
+        #     logger.error("domain plugin threading error {}:{}".format(repr(Exception), str(e)))
+        for func in work_list:
+            try:
+                func(target)
+            except Exception as e:
+                logger.error("domain plugin threading error {}:{}".format(repr(Exception), str(e)))
 
         logger.debug("target:{} End of scan".format(target))
         infos = collector.get_domain(target)
