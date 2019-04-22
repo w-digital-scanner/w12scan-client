@@ -6,7 +6,7 @@
 
 import logging
 import threading
-from config import DEBUG as d1
+from config import LOGGER_LEVEL
 
 from thirdpart.ansistrm import ColorizingStreamHandler
 
@@ -26,10 +26,7 @@ handle.level_map[logging.getLevelName('+')] = (None, 'green', False)
 handle.level_map[logging.getLevelName('x')] = (None, 'red', False)
 handle.level_map[logging.getLevelName('!')] = (None, 'yellow', False)
 
-if d1:
-    logger.setLevel(DEBUG)
-else:
-    logger.setLevel(INFO)
+logger.setLevel(LOGGER_LEVEL)
 
 formatter = logging.Formatter(fmt='%(asctime)s [%(levelname)s] %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
 handle.setFormatter(formatter)

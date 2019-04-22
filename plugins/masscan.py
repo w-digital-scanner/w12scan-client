@@ -11,7 +11,7 @@ from lib.data import PATHS,logger
 
 def masscan(target, ports):
     output = os.path.join(PATHS.OUTPUT_PATH, "output_" + str(time.time()) + ".log")
-    cmd = "masscan -p {} --rate={} --randomize-hosts -iL \"{}\" -oL \"{}\"" .format(ports, MASSCAN_RATE, target, output)
+    cmd = "masscan -p {} --rate={} --randomize-hosts --wait 0 -iL \"{}\" -oL \"{}\"" .format(ports, MASSCAN_RATE, target, output)
     os.system(cmd)
     logger.debug("masscan saved output:" + output)
     open_list = []

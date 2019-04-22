@@ -35,6 +35,7 @@ class Schedular:
         self.queue = Queue()
         self.threadNum = threadnum
         self.lock = threading.Lock()
+        self.ip_lock = threading.Lock()  # makesure only one ip process run
         self.cache_ips = []  # IP缓冲池
         self.cache_domains = []  # 域名缓冲池
         logger.info("Start number of threading {}".format(self.threadNum))
@@ -164,11 +165,13 @@ class Schedular:
                 fp.write('\n'.join(IP_LIST))
 
             logger.debug("ip:" + repr(IP_LIST))
+            self.ip_lock.acquire()
             try:
                 result = masscan(target, ports)
             except Exception as e:
                 logger.error("masscan error msg:{}".format(repr(e)))
                 result = None
+            self.ip_lock.release()
             if result is None:
                 return None
             # format:{'115.159.39.75': ['80'], '115.159.39.215': ['80', '3306'],}

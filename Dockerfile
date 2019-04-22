@@ -6,7 +6,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN set -x \
     && apt update \
-    && apt install python3 nmap masscan python3-pip -y
+    && apt install libpcap-dev python3 nmap masscan python3-pip -y
 RUN mkdir -p /opt/w12scan-client
 COPY . /opt/w12scan-client
 
