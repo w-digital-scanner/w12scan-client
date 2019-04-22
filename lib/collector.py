@@ -104,7 +104,7 @@ class Collector:
 
         task_update("finished", 1)
 
-        if self.cache_queue.qsize() > 10:
+        if self.cache_queue.qsize() > 3:
             self.submit()
 
     def send_ok_ip(self, target):
@@ -115,7 +115,7 @@ class Collector:
 
         task_update("finished", 1)
 
-        if self.cache_ips.qsize() > 10:
+        if self.cache_ips.qsize() > 3:
             self.submit()
 
     def submit(self):
@@ -142,6 +142,7 @@ class Collector:
             except Exception as e:
                 print("api request faild: {0} ".format(str(e)))
                 continue
+
             if r.status_code == 200:
                 status = json.loads(r.text)
                 if status["status"] != 200:

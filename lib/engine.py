@@ -33,16 +33,15 @@ class Schedular:
     def __init__(self, threadnum=1):
 
         self.queue = Queue()
+        self.ip_queue = Queue()
         self.threadNum = threadnum
         self.lock = threading.Lock()
-        self.ip_lock = threading.Lock()  # makesure only one ip process run
         self.cache_ips = []  # IP缓冲池
         self.cache_domains = []  # 域名缓冲池
         logger.info("Start number of threading {}".format(self.threadNum))
 
     def put_target(self, target):
         # 判断是IP还是域名，加入不同的字段
-        serviceType = "domain"
         if is_ip_address_format(target):
             serviceType = "ip"
         elif is_url_format(target):
@@ -55,25 +54,17 @@ class Schedular:
             "target": target,
             "serviceType": serviceType
         }
+        if serviceType == "ip":
+            self.ip_queue.put(tmp)
+        else:
+            self.queue.put(tmp)
+        task_update("tasks", self.queue.qsize() + self.ip_queue.qsize())
 
-        self.queue.put(tmp)
-        task_update("tasks", self.queue.qsize())
-
-    def put_struct(self, struct):
-        self.queue.put(struct)
-
-    def receive(self):
+    def receive_ip(self):
         while 1:
-            struct = self.queue.get()
-
-            task_update("tasks", self.queue.qsize())
-
+            struct = self.ip_queue.get()
             serviceType = struct.get("serviceType", 'other')
-            if serviceType == "other":
-                msg = "not matches target:{}".format(repr(struct))
-                logger.error(msg)
-                self.queue.task_done()
-                continue
+            task_update("tasks", self.queue.qsize() + self.ip_queue.qsize())
             if serviceType == "ip":
                 flag = False
                 self.lock.acquire()
@@ -85,7 +76,7 @@ class Schedular:
                     self.cache_ips = []
                 self.lock.release()
                 if not flag:
-                    self.queue.task_done()
+                    self.ip_queue.task_done()
                     continue
                 task_update("running", 1)
                 try:
@@ -94,6 +85,22 @@ class Schedular:
                     logger.error("hand ip error:{}".format(repr(e)))
                     logger.error(repr(sys.exc_info()))
                 task_update("running", -1)
+            self.ip_queue.task_done()
+            task_update("tasks", self.queue.qsize() + self.ip_queue.qsize())
+
+    def receive(self):
+        while 1:
+            struct = self.queue.get()
+
+            task_update("tasks", self.queue.qsize() + self.ip_queue.qsize())
+
+            serviceType = struct.get("serviceType", 'other')
+            if serviceType == "other":
+                msg = "not matches target:{}".format(repr(struct))
+                logger.error(msg)
+                self.queue.task_done()
+                continue
+
             elif serviceType == "domain":
                 flag = False
                 self.lock.acquire()
@@ -117,11 +124,12 @@ class Schedular:
                         logger.error(repr(sys.exc_info()))
                     task_update("running", -1)
             self.queue.task_done()
-            task_update("tasks", self.queue.qsize())
+            task_update("tasks", self.queue.qsize() + self.ip_queue.qsize())
 
     def start(self):
-        for i in range(self.threadNum):
+        for i in range(self.threadNum - 1):
             _thread.start_new_thread(self.receive, ())
+        _thread.start_new_thread(self.receive_ip, ())
 
     def nmap_result_handle(self, result_nmap: dict, host):
         if result_nmap is None:
@@ -151,10 +159,10 @@ class Schedular:
         return result2
 
     def hand_ip(self, serviceTypes, option='masscan'):
-        IP_LIST = []
+        ip_list = []
 
         for item in serviceTypes:
-            IP_LIST.append(item["target"])
+            ip_list.append(item["target"])
         ports = MASSCAN_DEFAULT_PORT
         result2 = {}
         if option == 'masscan':
@@ -162,16 +170,13 @@ class Schedular:
                 ports = "1-65535"
             target = os.path.join(PATHS.OUTPUT_PATH, "target_{0}.log".format(time.time()))
             with open(target, "w+") as fp:
-                fp.write('\n'.join(IP_LIST))
-
-            logger.debug("ip:" + repr(IP_LIST))
-            self.ip_lock.acquire()
+                fp.write('\n'.join(ip_list))
+            logger.debug("ip:" + repr(ip_list))
             try:
                 result = masscan(target, ports)
             except Exception as e:
                 logger.error("masscan error msg:{}".format(repr(e)))
                 result = None
-            self.ip_lock.release()
             if result is None:
                 return None
             # format:{'115.159.39.75': ['80'], '115.159.39.215': ['80', '3306'],}
@@ -192,8 +197,8 @@ class Schedular:
                 tmp_r = self.nmap_result_handle(result_nmap, host=host)
                 result2.update(tmp_r)
         elif option == "nmap":
-            logger.debug("ip:" + repr(IP_LIST))
-            for host in IP_LIST:
+            logger.debug("ip:" + repr(ip_list))
+            for host in ip_list:
                 result_nmap = nmapscan(host, ports.split(","))
                 tmp_r = self.nmap_result_handle(result_nmap, host=host)
                 if tmp_r:
@@ -319,9 +324,6 @@ class Schedular:
 
     def run(self):
         while 1:
-            if self.queue.qsize() > 0:
-                time.sleep(random.randint(1, 15))
-                continue
             # 对剩余未处理的域名进行处理
             if self.cache_domains:
                 self.lock.acquire()
@@ -354,5 +356,5 @@ class Schedular:
 
             # 最后一次提交
             collector.submit()
-            task_update("tasks", self.queue.qsize())
-            time.sleep(random.randint(2,5))
+            task_update("tasks", self.queue.qsize() + self.ip_queue.qsize())
+            time.sleep(random.randint(2, 10))

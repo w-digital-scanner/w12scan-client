@@ -79,12 +79,11 @@ def main():
     t = threading.Thread(target=func_target, name='LoopThread')
     t.start()
 
-    scheduler.run()
+    try:
+        scheduler.run()
+    except KeyboardInterrupt:
+        logger.info("User exit")
 
 
 if __name__ == '__main__':
-    try:
-        main()
-    except Exception as e:
-        logger.error("main error:{} {}".format(Exception, e))
-        logger.error(repr(sys.exc_info()))
+    main()
