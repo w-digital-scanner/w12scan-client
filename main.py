@@ -39,13 +39,13 @@ def main():
         list_name = "w12scan_scanned"
         while 1:
             target = redis_con.blpop(list_name)[1]
-            schedular.put_target(target)
+            scheduler.put_target(target)
 
         # redis_get()
 
     def debug_get():
         target = "http://stun.tuniu.com"
-        schedular.put_target(target)
+        scheduler.put_target(target)
 
     def node_register():
         first_blood = True
@@ -63,8 +63,8 @@ def main():
                 redis_con.hset(NODE_NAME, "last_time", time.time())
             time.sleep(50 * 5)
 
-    schedular = Schedular(threadnum=THREAD_NUM)
-    schedular.start()
+    scheduler = Schedular(threadnum=THREAD_NUM)
+    scheduler.start()
     # 启动任务分发调度器
     if DEBUG:
         func_target = debug_get
@@ -79,8 +79,7 @@ def main():
     t = threading.Thread(target=func_target, name='LoopThread')
     t.start()
 
-    while 1:
-        schedular.run()
+    scheduler.run()
 
 
 if __name__ == '__main__':

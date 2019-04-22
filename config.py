@@ -7,14 +7,16 @@
 # 程序运行的线程数
 import os
 
-THREAD_NUM = 40
+THREAD_NUM = 25
 DEBUG = False
-LOGGER_LEVEL = 1 if DEBUG else 2
+# LOGGER_LEVEL = 1 if DEBUG else 2
+LOGGER_LEVEL = 1
+
 # Ip的缓存数量
 NUM_CACHE_IP = 256
 
 # 域名的缓存数量
-NUM_CACHE_DOMAIN = 5
+NUM_CACHE_DOMAIN = 2
 
 # Masscan相关
 MASSCAN_RATE = 3000  # masscan 的速率

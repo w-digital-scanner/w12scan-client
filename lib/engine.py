@@ -6,6 +6,7 @@
 # 分发调度引擎
 import _thread
 import os
+import random
 import socket
 import sys
 import threading
@@ -314,29 +315,41 @@ class Schedular:
         collector.send_ok(target)
 
     def run(self):
-        self.queue.join()
-        # 对剩余未处理的域名进行处理
-        if self.cache_domains:
-            serviceTypes = self.cache_domains
-            # 多线程启动扫描域名
-            for serviceType in serviceTypes:
+        while 1:
+            if self.queue.qsize() > 0:
+                time.sleep(random.randint(1, 15))
+                continue
+            logger.debug("run...")
+            # 对剩余未处理的域名进行处理
+            if self.cache_domains:
+                self.lock.acquire()
+                service_types = self.cache_domains
+                self.cache_domains = []
+                self.lock.release()
+
+                # 多线程启动扫描域名
+                for serviceType in service_types:
+                    task_update("running", 1)
+                    try:
+                        self.hand_domain(serviceType)
+                    except Exception as e:
+                        logger.error(repr(sys.exc_info()))
+                    task_update("running", -1)
+
+            # 对剩余未处理的ip进行处理
+            if self.cache_ips:
+                self.lock.acquire()
+                service_types = self.cache_ips
+                self.cache_ips = []
+                self.lock.release()
+
                 task_update("running", 1)
                 try:
-                    self.hand_domain(serviceType)
-                except:
+                    self.hand_ip(service_types)
+                except Exception as e:
                     logger.error(repr(sys.exc_info()))
                 task_update("running", -1)
-            self.cache_domains = []
-        # 对剩余未处理的ip进行处理
-        if self.cache_ips:
-            serviceTypes = self.cache_ips
-            task_update("running", 1)
-            try:
-                self.hand_ip(serviceTypes)
-            except:
-                logger.error(repr(sys.exc_info()))
-            task_update("running", -1)
-            self.cache_ips = []
-        # 最后一次提交
-        collector.submit()
-        task_update("tasks", self.queue.qsize())
+
+            # 最后一次提交
+            collector.submit()
+            task_update("tasks", self.queue.qsize())
