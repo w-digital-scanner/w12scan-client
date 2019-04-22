@@ -322,7 +322,6 @@ class Schedular:
             if self.queue.qsize() > 0:
                 time.sleep(random.randint(1, 15))
                 continue
-            logger.debug("run...")
             # 对剩余未处理的域名进行处理
             if self.cache_domains:
                 self.lock.acquire()
@@ -356,3 +355,4 @@ class Schedular:
             # 最后一次提交
             collector.submit()
             task_update("tasks", self.queue.qsize())
+            time.sleep(random.randint(2,5))
