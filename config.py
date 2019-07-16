@@ -7,7 +7,7 @@
 # 程序运行的线程数
 import os
 
-THREAD_NUM = 25
+THREAD_NUM = 95
 DEBUG = False
 # LOGGER_LEVEL = 1 if DEBUG else 2
 LOGGER_LEVEL = 1
